@@ -7,21 +7,19 @@
         public string Breed { get; set; } // Race af kæledyr
         public int Age { get; set; } // Alder på kæledyret
         public string Info { get; set; } // Ekstra information om kæledyret
-        public string OwnerName { get; set; } // Brugernavn på kæledyrets ejer
 
         public Pets()
         {
 
         }
 
-        public Pets(string name, string species, string breed, int age, string info, string ownername)
+        public Pets(string name, string species, string breed, int age, string info)
         {
             Name = name;
             Species = species;
             Breed = breed;
             Age = age;
             Info = info;
-            OwnerName = ownername;
         }
     }
 }
