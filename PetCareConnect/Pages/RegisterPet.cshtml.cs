@@ -17,10 +17,7 @@ namespace PetCareConnect.Pages
 
         public IActionResult OnPost()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            
 
             try
             {
