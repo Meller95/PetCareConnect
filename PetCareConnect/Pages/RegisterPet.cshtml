@@ -1,0 +1,36 @@
+﻿@page
+@model PetCareConnect.Pages.RegisterPetModel
+@{
+    ViewData["Title"] = "Register Pet";
+}
+
+<h1>Register Pet</h1>
+
+<form method="post">
+    <div>
+        <label>Name:</label>
+        <input type="text" asp-for="Pet.Name" />
+    </div>
+    <div>
+        <label>Species:</label>
+        <input type="text" asp-for="Pet.Species" />
+    </div>
+    <div>
+        <label>Breed:</label>
+        <input type="text" asp-for="Pet.Breed" />
+    </div>
+    <div>
+        <label>Age:</label>
+        <input type="number" asp-for="Pet.Age" />
+    </div>
+    <div>
+        <label>Available for care:</label>
+        <input type="text" asp-for="Pet.Info" />
+    </div>
+    <div>
+        <label>Owners name: "Pet.OwnerName"</label>
+    </div>
+
+    <button type="submit">Register</button>
+</form>
+

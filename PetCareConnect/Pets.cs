@@ -9,6 +9,11 @@
         public string Info { get; set; } // Ekstra information om kæledyret
         public string OwnerName { get; set; } // Brugernavn på kæledyrets ejer
 
+        public Pets()
+        {
+
+        }
+
         public Pets(string name, string species, string breed, int age, string info, string ownername)
         {
             Name = name;
