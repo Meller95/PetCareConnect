@@ -38,7 +38,6 @@ namespace PetCareConnect.Pages
                             command.Parameters.AddWithValue("@Breed", Pet.Breed);
                             command.Parameters.AddWithValue("@Age", Pet.Age);
                             command.Parameters.AddWithValue("@Info", Pet.Info);
-                            command.Parameters.AddWithValue("@OwnerName", Pet.OwnerName);
 
                             // Execute the query
                             command.ExecuteNonQuery();
