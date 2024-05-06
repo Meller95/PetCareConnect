@@ -5,29 +5,29 @@
 }
 
 <h1>Register Pet</h1>
-
+<div class="form-container">
 <form method="post">
-    <div>
+    <div class="form-field">
         <label>Name:</label>
         <input type="text" asp-for="Pet.Name" />
     </div>
-    <div>
+    <div class="form-field">
         <label>Species:</label>
         <input type="text" asp-for="Pet.Species" />
     </div>
-    <div>
+    <div class="form-field">
         <label>Breed:</label>
         <input type="text" asp-for="Pet.Breed" />
     </div>
-    <div>
+    <div class="form-field">
         <label>Age:</label>
         <input type="number" asp-for="Pet.Age" />
     </div>
-    <div>
+    <div class="form-field">
         <label>Pet Info:</label>
         <input type="text" asp-for="Pet.Info" />
     </div>
 
-    <button type="submit">Register</button>
+    <button type="submit" class="submit-button">Register</button>
 </form>
 
