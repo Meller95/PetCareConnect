@@ -1,0 +1,50 @@
+﻿/* Container to align the form to the right */
+.form-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+    /* Style adjustments for the form */
+    .form-container form {
+        width: 400px; /* Adjust the width as needed */
+    }
+
+/* Bottom margin for form fields */
+.form-field {
+    margin-bottom: 15px;
+}
+
+    /* Style for labels in the form */
+    .form-field label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Style for input fields */
+    .form-field input {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+    }
+
+/* Style for the submit button */
+.submit-button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 18px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+    /* Hover effect for the submit button */
+    .submit-button:hover {
+        background-color: #0056b3; /* Darker shade of blue for hover effect */
+    }
+
+    /* Active state effect for the submit button */
+    .submit-button:active {
+        background-color: #004080; /* Even darker shade for active state */
+        transform: scale(0.98); /* Slightly scale down when pressed */
+    }
