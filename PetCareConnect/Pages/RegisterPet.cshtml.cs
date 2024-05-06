@@ -29,7 +29,7 @@ namespace PetCareConnect.Pages
                     if (connection != null)
                     {
                         // SQL query to insert data into the Pets table
-                        string query = "INSERT INTO Pets (Name, Species, Breed, Age, Info, OwnerName) VALUES (@Name, @Species, @Breed, @Age, @Info, @OwnerName)";
+                        string query = "INSERT INTO Pets (Name, Species, Breed, Age, Info, OwnerName) VALUES (@Name, @Species, @Breed, @Age, @Info)";
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
                             // Parameters
