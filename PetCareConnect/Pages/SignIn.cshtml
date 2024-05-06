@@ -5,5 +5,18 @@
 <p>If you don't have an account, you can create one below:</p>
 
 <form method="post">
-    <button type="submit" class="btn btn-primary">Create User</button>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="Username" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Sign In</button>
 </form>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="text-danger">@Model.ErrorMessage</div>
+}
