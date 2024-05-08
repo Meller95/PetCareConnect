@@ -23,7 +23,7 @@ public class SignInModel : PageModel
         {
             if (IsValidUser(Username, Password))
             {
-                // Assuming successful sign-in, redirect to a different page
+                HttpContext.Session.SetString("Username", Username); // Store username in session
                 return RedirectToPage("/Index");
             }
             else
@@ -36,6 +36,8 @@ public class SignInModel : PageModel
         ErrorMessage = "Username and password are required.";
         return Page();
     }
+
+
 
     private bool IsValidUser(string username, string password)
     {

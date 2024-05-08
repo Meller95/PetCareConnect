@@ -6,10 +6,7 @@
     <title>@ViewData["Title"] - PetCareConnect</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/CSS_StyleSheet.css" asp-append-version="true" />
-
     <link rel="stylesheet" href="~/css/PetCareConnect.styles.css" asp-append-version="true" />
-
-
 </head>
 <body>
     <header>
@@ -28,14 +25,31 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/SignIn">Sign In</a> <!-- This is the new "Sign In" link -->
-                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (string.IsNullOrEmpty(Context.Session.GetString("Username")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/SignIn">Sign In</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/UserProfile">Welcome, @Context.Session.GetString("Username")!</a>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-page="/Logout">
+                                    <button type="submit" class="btn btn-secondary">Logout</button>
+                                </form>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
