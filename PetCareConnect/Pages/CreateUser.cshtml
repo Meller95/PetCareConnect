@@ -2,23 +2,27 @@
 @model PetCareConnect.Pages.CreateUserModel
 
 <h2>Create a New User</h2>
-<div class="form-container">
-    <form method="post">
-        <div class="form-field">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="Username" class="form-field" />
-        </div>
-        <div class="form-field">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="Password" class="form-field" />
-        </div>
-        <div>
-            <button type="submit" class="submit-button">Create</button>
-        </div>
-    </form>
-</div>
+<form method="post">
+    <div class="form-field">
+        <label for="username">Username:</label>
+        <input type="text" asp-for="NewUser.Username" required />
+    </div>
+    <div class="form-field">
+        <label for="password">Password:</label>
+        <input type="password" asp-for="NewUser.PasswordHash" required />
+    </div>
+    <div class="form-field">
+        <label for="email">Email:</label>
+        <input type="email" asp-for="NewUser.Email" required />
+    </div>
+    <div class="form-field">
+        <label for="fullname">Full Name:</label>
+        <input type="text" asp-for="NewUser.FullName" required />
+    </div>
+    <button type="submit" class="submit-button">Create</button>
+</form>
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
-    <p>@Model.Message</p>
+    <div>@Model.Message</div>
 }

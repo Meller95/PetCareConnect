@@ -51,7 +51,7 @@ public class SignInModel : PageModel
             if (result != null)
             {
                 string storedHash = result.ToString();
-                Console.WriteLine("Stored Hash: " + storedHash);  // Check the format here
+                Console.WriteLine("Stored Hash: " + storedHash);
                 return BCrypt.Net.BCrypt.Verify(password, storedHash);
             }
             else
