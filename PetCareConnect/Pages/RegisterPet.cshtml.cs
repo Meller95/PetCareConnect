@@ -59,7 +59,7 @@ namespace PetCareConnect.Pages
                 }
 
                 // Redirect to a confirmation page or elsewhere after successful registration
-                return RedirectToPage("/Index");
+                return RedirectToPage("/YourProfile");
             }
             catch (Exception ex)
             {

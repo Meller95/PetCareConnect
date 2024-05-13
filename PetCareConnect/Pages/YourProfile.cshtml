@@ -1,10 +1,13 @@
 ﻿@page
 @model PetCareConnect.Pages.YourProfileModel
 
+<!-- Link to CSS file -->
+<link rel="stylesheet" type="text/css" href="path/to/your/css/file.css">
+
 <h2>Your Profile</h2>
 
 <!-- Display User Details -->
-<div>
+<div class="user-details">
     <h3>@Model.User.Username's Profile</h3>
     <p>Full Name: @Model.User.FullName</p>
     <p>Email: @Model.User.Email</p>
@@ -14,23 +17,18 @@
 @if (Model.Pets.Any())
 {
     <h4>Your Pets</h4>
-    <ul>
+    <ul class="pet-list">
         @foreach (var pet in Model.Pets)
         {
-            <li>
+            <li class="pet-item">
                 <strong>Name:</strong> @pet.Name <br />
                 <strong>Species:</strong> @pet.Species <br />
                 <strong>Breed:</strong> @pet.Breed <br />
                 <strong>Age:</strong> @pet.Age <br />
                 <strong>Info:</strong> @pet.Info
-                <form method="post" asp-page-handler="DeletePet" asp-route-petId="@pet.PetId">
+                <form method="post" asp-page-handler="DeletePet" asp-route-petId="@pet.PetId" class="delete-form">
                     <button type="submit" class="btn btn-danger btn-sm">X</button>
                 </form>
-
-
-
-
-
             </li>
         }
     </ul>

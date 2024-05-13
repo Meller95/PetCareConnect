@@ -1,13 +1,28 @@
 ﻿/* Container to align the form to the right */
-.form-container {
-    display: flex;
-    justify-content: flex-start;
+.user-details {
+    margin-bottom: 20px;
 }
 
-    /* Style adjustments for the form */
-    .form-container form {
-        width: 400px; /* Adjust the width as needed */
-    }
+.pet-list {
+    list-style: none;
+    padding: 0;
+}
+
+.pet-item {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.delete-form {
+    margin-top: 10px;
+}
+
+/* Style adjustments for the form */
+.form-container form {
+    width: 100%; /* Adjust the width as needed */
+}
 
 /* Bottom margin for form fields */
 .form-field {
