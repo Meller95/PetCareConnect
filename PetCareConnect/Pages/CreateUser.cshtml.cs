@@ -39,7 +39,7 @@ namespace PetCareConnect.Pages
                 }
 
                 Message = "User created successfully!";
-                return RedirectToPage();
+                return RedirectToPage("/SignIn");
             }
             else
             {

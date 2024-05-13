@@ -1,0 +1,47 @@
+﻿@page
+@model PetCareConnect.Pages.YourProfileModel
+
+<h2>Your Profile</h2>
+
+<!-- Display User Details -->
+<div>
+    <h3>@Model.User.Username's Profile</h3>
+    <p>Full Name: @Model.User.FullName</p>
+    <p>Email: @Model.User.Email</p>
+</div>
+
+<!-- Display Registered Pets -->
+@if (Model.Pets.Any())
+{
+    <h4>Your Pets</h4>
+    <ul>
+        @foreach (var pet in Model.Pets)
+        {
+            <li>
+                <strong>Name:</strong> @pet.Name <br />
+                <strong>Species:</strong> @pet.Species <br />
+                <strong>Breed:</strong> @pet.Breed <br />
+                <strong>Age:</strong> @pet.Age <br />
+                <strong>Info:</strong> @pet.Info
+                <form method="post" asp-page-handler="DeletePet" asp-route-petId="@pet.PetId">
+                    <button type="submit" class="btn btn-danger btn-sm">X</button>
+                </form>
+
+
+
+
+
+            </li>
+        }
+    </ul>
+}
+
+else
+{
+    <p>You have no registered pets.</p>
+}
+
+<!-- Link to Register Pet Page -->
+<p>
+    <a class="btn btn-primary" asp-page="/RegisterPet">Register Pet</a>
+</p>

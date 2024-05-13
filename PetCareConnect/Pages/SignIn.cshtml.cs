@@ -21,10 +21,12 @@ public class SignInModel : PageModel
     {
         if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password))
         {
-            if (IsValidUser(Username, Password))
+            var (isValid, userId) = IsValidUser(Username, Password);
+            if (isValid)
             {
-                HttpContext.Session.SetString("Username", Username); // Store username in session
-                return RedirectToPage("/Index");
+                HttpContext.Session.SetInt32("UserId", userId.Value); // Store user ID in session
+                HttpContext.Session.SetString("Username", Username); // Optionally store username as well
+                return RedirectToPage("/YourProfile");
             }
             else
             {
@@ -39,30 +41,31 @@ public class SignInModel : PageModel
 
 
 
-    private bool IsValidUser(string username, string password)
+
+    private (bool, int?) IsValidUser(string username, string password)
     {
-        // Establish a connection to the database
         using (var connection = DB_Connection.GetConnection())
         {
-            // Prepare the SQL command to retrieve the hashed password
-            var command = new SqlCommand("SELECT Password FROM Users WHERE Username = @Username", connection);
+            // Prepare the SQL command to retrieve the user ID and hashed password
+            var command = new SqlCommand("SELECT UserId, Password FROM Users WHERE Username = @Username", connection);
             command.Parameters.AddWithValue("@Username", username);
 
-            // Execute the command and retrieve the hashed password
-            var result = command.ExecuteScalar();
-            if (result != null)
+            using (var reader = command.ExecuteReader())
             {
-                string storedHash = result.ToString();
-                Console.WriteLine("Stored Hash: " + storedHash);
-                return BCrypt.Net.BCrypt.Verify(password, storedHash);
-            }
-            else
-            {
-                Console.WriteLine("No matching user found or hash retrieval failed.");
-            }
+                if (reader.Read())
+                {
+                    int userId = reader.GetInt32(0);
+                    string storedHash = reader.GetString(1);
 
+                    if (BCrypt.Net.BCrypt.Verify(password, storedHash))
+                    {
+                        return (true, userId);
+                    }
+                }
+            }
         }
-        return false;
+        return (false, null);
     }
+
 
 }

@@ -27,14 +27,11 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav">
-                        @if (string.IsNullOrEmpty(Context.Session.GetString("Username")))
+                        @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/SignIn">Sign In</a>
+                                <a class="nav-link text-dark" asp-page="/YourProfile">Your Profile</a>
                             </li>
-                        }
-                        else
-                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/UserProfile">Welcome, @Context.Session.GetString("Username")!</a>
                             </li>
@@ -42,6 +39,12 @@
                                 <form method="post" asp-page="/Logout">
                                     <button type="submit" class="btn btn-secondary">Logout</button>
                                 </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/SignIn">Sign In</a>
                             </li>
                         }
                     </ul>
