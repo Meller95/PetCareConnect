@@ -40,8 +40,6 @@ public class SignInModel : PageModel
     }
 
 
-
-
     private (bool, int?) IsValidUser(string username, string password)
     {
         using (var connection = DB_Connection.GetConnection())

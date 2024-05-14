@@ -1,0 +1,36 @@
+﻿@page
+@model PetCareConnect.Pages.CreateAssignmentModel
+@{
+    ViewData["Title"] = "Create Assignment";
+}
+
+<h1>Create Assignment</h1>
+<div class="form-container">
+    <form method="post">
+        <div class="form-field">
+            <label>Pet:</label>
+            <select asp-for="Assignment.PetId" asp-items="@Model.RegisteredPets.Select(pet => new SelectListItem { Value = pet.PetId.ToString(), Text = pet.Name })"></select>
+        </div>
+        <div class="form-field">
+            <label>Start Date:</label>
+            <input type="date" asp-for="Assignment.StartDate" />
+        </div>
+        <div class="form-field">
+            <label>End Date:</label>
+            <input type="date" asp-for="Assignment.EndDate" />
+        </div>
+        <div class="form-field">
+            <label>Task Type:</label>
+            <select asp-for="Assignment.TaskType" asp-items="@Model.TaskTypes"></select>
+        </div>
+        <div class="form-field">
+            <label>Feeding Schedule:</label>
+            <input type="text" asp-for="Assignment.FeedingSchedule" />
+        </div>
+        <div class="form-field">
+            <label>Food Amount:</label>
+            <input type="text" asp-for="Assignment.FoodAmount" />
+        </div>
+        <button type="submit" class="submit-button">Create</button>
+    </form>
+</div>
