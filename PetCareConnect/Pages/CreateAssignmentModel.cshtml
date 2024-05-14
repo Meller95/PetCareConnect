@@ -7,29 +7,36 @@
 <h1>Create Assignment</h1>
 <div class="form-container">
     <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-field">
             <label>Pet:</label>
-            <select asp-for="Assignment.PetId" asp-items="@Model.RegisteredPets.Select(pet => new SelectListItem { Value = pet.PetId.ToString(), Text = pet.Name })"></select>
+            <select asp-for="Assignment.PetId" asp-items="@Model.RegisteredPets?.Select(pet => new SelectListItem { Value = pet.PetId.ToString(), Text = pet.Name })"></select>
+            <span asp-validation-for="Assignment.PetId" class="text-danger"></span>
         </div>
         <div class="form-field">
             <label>Start Date:</label>
             <input type="date" asp-for="Assignment.StartDate" />
+            <span asp-validation-for="Assignment.StartDate" class="text-danger"></span>
         </div>
         <div class="form-field">
             <label>End Date:</label>
             <input type="date" asp-for="Assignment.EndDate" />
+            <span asp-validation-for="Assignment.EndDate" class="text-danger"></span>
         </div>
         <div class="form-field">
             <label>Task Type:</label>
             <select asp-for="Assignment.TaskType" asp-items="@Model.TaskTypes"></select>
+            <span asp-validation-for="Assignment.TaskType" class="text-danger"></span>
         </div>
         <div class="form-field">
             <label>Feeding Schedule:</label>
             <input type="text" asp-for="Assignment.FeedingSchedule" />
+            <span asp-validation-for="Assignment.FeedingSchedule" class="text-danger"></span>
         </div>
         <div class="form-field">
             <label>Food Amount:</label>
             <input type="text" asp-for="Assignment.FoodAmount" />
+            <span asp-validation-for="Assignment.FoodAmount" class="text-danger"></span>
         </div>
         <button type="submit" class="submit-button">Create</button>
     </form>

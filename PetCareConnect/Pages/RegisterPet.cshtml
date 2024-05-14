@@ -1,35 +1,41 @@
-﻿@page 
-
+﻿@page
 @model PetCareConnect.Pages.RegisterPetModel
-<div class="container"> 
-    <h2>Register Your Pet</h2> 
-    <form method="post" enctype="multipart/form-data" class="form-horizontal"> 
-        <!-- Pet Name Input --> 
-        <div class="form-group"> 
-            <label class="control-label col-sm-2">Pet Name:</label> 
-            <div class="col-sm-10"> 
-                <input type="text" class="form-control" id="PetName" name="PetName" placeholder="Enter pet's name"> 
-            </div> 
+<div class="container">
+    <h2>Register Your Pet</h2>
+    <form method="post" enctype="multipart/form-data" class="form-horizontal">
+        <!-- Pet Name Input -->
+        <div class="form-group">
+            <label class="control-label col-sm-2">Pet Name:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Name" name="Pet.Name" placeholder="Enter pet's name">
+            </div>
         </div>
         <!-- Pet Species Input -->
         <div class="form-group">
             <label class="control-label col-sm-2">Species:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="Species" name="Species" placeholder="Enter pet's species">
+                <input type="text" class="form-control" id="Species" name="Pet.Species" placeholder="Enter pet's species">
             </div>
         </div>
         <!-- Pet Breed Input -->
         <div class="form-group">
             <label class="control-label col-sm-2">Breed:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="Breed" name="Breed" placeholder="Enter pet's breed">
+                <input type="text" class="form-control" id="Breed" name="Pet.Breed" placeholder="Enter pet's breed">
             </div>
         </div>
         <!-- Pet Age Input -->
         <div class="form-group">
             <label class="control-label col-sm-2">Age:</label>
             <div class="col-sm-10">
-                <input type="number" class="form-control" id="Age" name="Age" placeholder="Enter pet's age">
+                <input type="number" class="form-control" id="Age" name="Pet.Age" placeholder="Enter pet's age">
+            </div>
+        </div>
+        <!-- Pet Info Input -->
+        <div class="form-group">
+            <label class="control-label col-sm-2">Info:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="Info" name="Pet.Info" placeholder="Enter pet's info"></textarea>
             </div>
         </div>
         <!-- Pet Picture File Input -->

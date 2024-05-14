@@ -10,6 +10,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Picture</th>
                 <th>Name</th>
                 <th>Species</th>
                 <th>Breed</th>
@@ -21,6 +22,12 @@
             @foreach (var pet in Model.RegisteredPets)
             {
                 <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(pet.PictureUrl))
+                        {
+                            <img src="@pet.PictureUrl" alt="Pet Picture" style="width:100px;height:auto;" />
+                        }
+                    </td>
                     <td>@pet.Name</td>
                     <td>@pet.Species</td>
                     <td>@pet.Breed</td>

@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using PetCareConnect.Models;
 using System.Security.Claims;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace PetCareConnect.Pages
 {
@@ -24,7 +25,11 @@ namespace PetCareConnect.Pages
             // Get the current user ID
             var LoggedInUserId = HttpContext.Session.GetInt32("UserId");
 
-            
+            if (LoggedInUserId == null)
+            {
+                // Redirect to login page or show an error
+                RedirectToPage("/Login");
+            }
 
             // Load user's registered pets from the database
             RegisteredPets = GetPetsForUser((int)LoggedInUserId);
@@ -43,6 +48,13 @@ namespace PetCareConnect.Pages
         {
             if (!ModelState.IsValid)
             {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        Console.WriteLine(error.ErrorMessage);
+                    }
+                }
                 return Page();
             }
 
@@ -54,6 +66,8 @@ namespace PetCareConnect.Pages
                 return RedirectToPage("/YourProfile", new { area = "Identity" });
             }
 
+            Assignment.UserId = (int)LoggedInUserId; // Set the UserId in Assignment
+
             // Insert the assignment into the database
             using (SqlConnection connection = DB_Connection.GetConnection())
             {
@@ -62,7 +76,7 @@ namespace PetCareConnect.Pages
                     string query = "INSERT INTO Assignments (UserId, PetId, StartDate, EndDate, TaskType, FeedingSchedule, FoodAmount) VALUES (@UserId, @PetId, @StartDate, @EndDate, @TaskType, @FeedingSchedule, @FoodAmount)";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@UserId", LoggedInUserId);
+                        command.Parameters.AddWithValue("@UserId", Assignment.UserId);
                         command.Parameters.AddWithValue("@PetId", Assignment.PetId);
                         command.Parameters.AddWithValue("@StartDate", Assignment.StartDate);
                         command.Parameters.AddWithValue("@EndDate", Assignment.EndDate);
