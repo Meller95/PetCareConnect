@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 
 namespace PetCareConnect.Pages
@@ -10,62 +12,81 @@ namespace PetCareConnect.Pages
         [BindProperty]
         public Pets Pet { get; set; }
 
-        public void OnGet()
-        {
-            Pet = new Pets();
-        }
+        [BindProperty]
+        public IFormFile UploadedFile { get; set; }
 
-        public IActionResult OnPost()
+
+        public async Task<IActionResult> OnPostAsync()
         {
-            // Retrieve the logged-in user's ID from the session
             var loggedInUserId = HttpContext.Session.GetInt32("UserId");
             if (loggedInUserId == null)
             {
-                return Unauthorized();  // Simple unauthorized response
+                return Unauthorized();
             }
 
-
-            // Set the OwnerId of the pet to the logged-in user's ID
             Pet.OwnerId = loggedInUserId.Value;
+
+            if (UploadedFile != null && UploadedFile.Length > 0)
+            {
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "pets");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(UploadedFile.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                try
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await UploadedFile.CopyToAsync(stream);
+                    }
+                    Pet.PictureUrl = "images/pets/" + fileName;  // Save relative path for later retrieval
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error saving file: {ex.Message}");
+                    return Page();  // Return to page with error message
+                }
+            }
+            else
+            {
+                Pet.PictureUrl = null;  // Handle case where no file is uploaded
+            }
+
+            Console.WriteLine("Attempting to save to database"); // Debugging line
 
             try
             {
-                using (SqlConnection connection = DB_Connection.GetConnection())
+                using (var connection = DB_Connection.GetConnection())
                 {
-                    if (connection != null)
+                    string query = "INSERT INTO Pets (Name, Species, Breed, Age, Info, OwnerId, PictureUrl) VALUES (@Name, @Species, @Breed, @Age, @Info, @OwnerId, @PictureUrl)";
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        // SQL query to insert data into the Pets table, now including OwnerId
-                        string query = "INSERT INTO Pets (Name, Species, Breed, Age, Info, OwnerId) VALUES (@Name, @Species, @Breed, @Age, @Info, @OwnerId)";
-                        using (SqlCommand command = new SqlCommand(query, connection))
-                        {
-                            // Parameters including OwnerId
-                            command.Parameters.AddWithValue("@Name", Pet.Name);
-                            command.Parameters.AddWithValue("@Species", Pet.Species);
-                            command.Parameters.AddWithValue("@Breed", Pet.Breed);
-                            command.Parameters.AddWithValue("@Age", Pet.Age);
-                            command.Parameters.AddWithValue("@Info", Pet.Info);
-                            command.Parameters.AddWithValue("@OwnerId", Pet.OwnerId);  // Ensure this column exists in your table
+                        command.Parameters.AddWithValue("@Name", Pet.Name);
+                        command.Parameters.AddWithValue("@Species", Pet.Species);
+                        command.Parameters.AddWithValue("@Breed", Pet.Breed);
+                        command.Parameters.AddWithValue("@Age", Pet.Age);
+                        command.Parameters.AddWithValue("@Info", Pet.Info);
+                        command.Parameters.AddWithValue("@OwnerId", Pet.OwnerId);
+                        command.Parameters.AddWithValue("@PictureUrl", Pet.PictureUrl);
 
-                            // Execute the query
-                            command.ExecuteNonQuery();
-                        }
-                    }
-                    else
-                    {
-                        // Connection failed
-                        Console.WriteLine("Unable to connect to the database.");
-                        return Page();
+                        command.ExecuteNonQuery();
                     }
                 }
 
-                // Redirect to a confirmation page or elsewhere after successful registration
                 return RedirectToPage("/YourProfile");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
-                return Page();
+                Console.WriteLine("Database error: " + ex.Message);
+                return Page();  // Return to page with error message
             }
         }
+
+
+
     }
 }
