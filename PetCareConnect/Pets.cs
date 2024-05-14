@@ -9,12 +9,13 @@
         public int Age { get; set; } // Alder på kæledyret
         public string Info { get; set; } // Ekstra information om kæledyret
         public int OwnerId { get; set; } // Ejerens ID
+        public string PictureUrl { get; set; } // Billede af kæledyret
         public Pets()
         {
 
         }
 
-        public Pets(int petid, string name, string species, string breed, int age, string info, int ownerId)
+        public Pets(int petid, string name, string species, string breed, int age, string info, int ownerId, string pictureUrl)
         {
             PetId = petid;
             Name = name;
@@ -23,6 +24,7 @@
             Age = age;
             Info = info;
             OwnerId = ownerId;
+            PictureUrl = pictureUrl;
         }
     }
 }
