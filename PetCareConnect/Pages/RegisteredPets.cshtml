@@ -1,0 +1,37 @@
+﻿@page
+@model PetCareConnect.Pages.RegisteredPetsModel
+@{
+    ViewData["Title"] = "Registered Pets";
+}
+
+<h1>Registered Pets</h1>
+@if (Model.RegisteredPets != null && Model.RegisteredPets.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Species</th>
+                <th>Breed</th>
+                <th>Age</th>
+                <th>Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pet in Model.RegisteredPets)
+            {
+                <tr>
+                    <td>@pet.Name</td>
+                    <td>@pet.Species</td>
+                    <td>@pet.Breed</td>
+                    <td>@pet.Age</td>
+                    <td>@pet.Info</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No pets registered.</p>
+}
