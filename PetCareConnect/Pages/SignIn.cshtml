@@ -1,23 +1,25 @@
 ﻿@page
 @model SignInModel
 
-<h2>Sign In</h2>
-<p>If you don't have an account, you can create one below:</p>
+<div class="container">
+    <h2 class="mb-3">Sign In</h2>
+    <p>If you don't have an account, you can create one below:</p>
 
-<form method="post">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="Username" class="form-control" required />
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="Password" class="form-control" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Sign In</button>
-    <a href="/CreateUser" class="btn btn-secondary">Create User</a> <!-- Link styled as a button -->
-</form>
+    <form method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="Username" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="Password" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+        <a href="/CreateUser" class="btn btn-secondary">Create User</a> <!-- Link styled as a button -->
+    </form>
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="text-danger">@Model.ErrorMessage</div>
-}
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+</div>
