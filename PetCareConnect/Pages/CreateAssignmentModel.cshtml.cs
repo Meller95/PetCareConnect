@@ -24,8 +24,6 @@ namespace PetCareConnect.Pages
             // Get the current user ID
             var LoggedInUserId = HttpContext.Session.GetInt32("UserId");
 
-            
-
             // Load user's registered pets from the database
             RegisteredPets = GetPetsForUser((int)LoggedInUserId);
 
