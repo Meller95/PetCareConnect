@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" />
+
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -16,6 +19,56 @@
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom Script to apply text size and colorblind mode -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const textSize = localStorage.getItem('textSize') || 'default';
+            const colorblindMode = localStorage.getItem('colorblindMode') || 'default';
+
+            applyTextSize(textSize);
+            applyColorblindMode(colorblindMode);
+        });
+
+        function applyTextSize(size) {
+            let textSizeClass = '';
+            switch (size) {
+                case 'small':
+                    textSizeClass = 'text-small';
+                    break;
+                case 'medium':
+                    textSizeClass = 'text-medium';
+                    break;
+                case 'large':
+                    textSizeClass = 'text-large';
+                    break;
+                case 'x-large':
+                    textSizeClass = 'text-x-large';
+                    break;
+                default:
+                    textSizeClass = '';
+            }
+
+            document.body.className = textSizeClass;
+        }
+
+        function applyColorblindMode(mode) {
+            document.body.classList.remove('colorblind-protanopia', 'colorblind-deuteranopia', 'colorblind-tritanopia', 'colorblind-default');
+            switch (mode) {
+                case 'protanopia':
+                    document.body.classList.add('colorblind-protanopia');
+                    break;
+                case 'deuteranopia':
+                    document.body.classList.add('colorblind-deuteranopia');
+                    break;
+                case 'tritanopia':
+                    document.body.classList.add('colorblind-tritanopia');
+                    break;
+                default:
+                    document.body.classList.add('colorblind-default');
+            }
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -43,6 +96,9 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/YourProfile">Your Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Settings">Settings</a>
                             </li>
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Welcome, @Context.Session.GetString("Username")!</span>

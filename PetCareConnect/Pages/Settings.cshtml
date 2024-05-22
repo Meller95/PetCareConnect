@@ -1,0 +1,105 @@
+﻿@page
+@model PetCareConnect.Pages.SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<h1>Settings</h1>
+
+<div class="form-group">
+    <label for="textSizeSelect">Select Text Size:</label>
+    <select id="textSizeSelect" class="form-control" onchange="adjustTextSize()">
+        <option value="default">Default</option>
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="x-large">Extra Large</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="colorblindMode">Colorblind Mode:</label>
+    <select id="colorblindMode" class="form-control" onchange="toggleColorblindMode()">
+        <option value="default">None</option>
+        <option value="protanopia">Protanopia (red-blind)</option>
+        <option value="deuteranopia">Deuteranopia (green-blind)</option>
+        <option value="tritanopia">Tritanopia (blue-blind)</option>
+    </select>
+</div>
+
+<hr />
+
+<h2>Account Settings</h2>
+<div class="form-group">
+    <a class="btn btn-primary mb-2" asp-page="/ChangePassword">Change Password</a>
+</div>
+<div class="form-group">
+    <a class="btn btn-primary mb-2" asp-page="/ChangeEmail">Change Email</a>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Check if a text size or colorblind mode is stored in localStorage
+            const textSize = localStorage.getItem('textSize') || 'default';
+            const colorblindMode = localStorage.getItem('colorblindMode') || 'default';
+
+            document.getElementById('textSizeSelect').value = textSize;
+            document.getElementById('colorblindMode').value = colorblindMode;
+
+            applyTextSize(textSize);
+            applyColorblindMode(colorblindMode);
+        });
+
+        function adjustTextSize() {
+            const textSize = document.getElementById('textSizeSelect').value;
+            applyTextSize(textSize);
+            localStorage.setItem('textSize', textSize); // Store the selected text size in localStorage
+        }
+
+        function toggleColorblindMode() {
+            const colorblindMode = document.getElementById('colorblindMode').value;
+            applyColorblindMode(colorblindMode);
+            localStorage.setItem('colorblindMode', colorblindMode);
+        }
+
+        function applyTextSize(size) {
+            let textSizeClass = '';
+            switch (size) {
+                case 'small':
+                    textSizeClass = 'text-small';
+                    break;
+                case 'medium':
+                    textSizeClass = 'text-medium';
+                    break;
+                case 'large':
+                    textSizeClass = 'text-large';
+                    break;
+                case 'x-large':
+                    textSizeClass = 'text-x-large';
+                    break;
+                default:
+                    textSizeClass = '';
+            }
+
+            document.body.className = textSizeClass;
+        }
+
+        function applyColorblindMode(mode) {
+            document.body.classList.remove('colorblind-protanopia', 'colorblind-deuteranopia', 'colorblind-tritanopia', 'colorblind-default');
+            switch (mode) {
+                case 'protanopia':
+                    document.body.classList.add('colorblind-protanopia');
+                    break;
+                case 'deuteranopia':
+                    document.body.classList.add('colorblind-deuteranopia');
+                    break;
+                case 'tritanopia':
+                    document.body.classList.add('colorblind-tritanopia');
+                    break;
+                default:
+                    document.body.classList.add('colorblind-default');
+            }
+        }
+    </script>
+}

@@ -20,3 +20,51 @@ html {
 body {
   margin-bottom: 60px;
 }
+.text-small {
+    font-size: 0.8rem;
+}
+
+.text-medium {
+    font-size: 1rem;
+}
+
+.text-large {
+    font-size: 1.2rem;
+}
+
+.text-x-large {
+    font-size: 1.5rem;
+}
+
+/* Ensure the default body class does not apply any specific font size */
+body {
+    font-size: 1rem; /* Default text size */
+}
+
+.colorblind-protanopia {
+    filter: url(#protanopia);
+}
+
+.colorblind-deuteranopia {
+    filter: url(#deuteranopia);
+}
+
+.colorblind-tritanopia {
+    filter: url(#tritanopia);
+}
+
+.colorblind-default {
+    filter: none;
+}
+
+.colorblind-protanopia {
+    filter: brightness(1.1) contrast(0.85);
+}
+
+.colorblind-deuteranopia {
+    filter: brightness(1.1) contrast(0.85) sepia(0.8);
+}
+
+.colorblind-tritanopia {
+    filter: brightness(1.1) contrast(0.85) sepia(0.9) saturate(1.5);
+}
