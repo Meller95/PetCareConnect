@@ -30,10 +30,10 @@
             {
                 @foreach (var assignment in Model.Assignments)
                 {
-                    <li>@assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name</li>
-                    <form asp-page-handler="AssignmentDetails" asp-route-assignmentId="@assignment.AssignmentId">
-                        <button type="submit">Assignment details</button>
-                    </form>
+                    <li>
+                        @assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name
+                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
+                    </li>
                 }
             }
             else

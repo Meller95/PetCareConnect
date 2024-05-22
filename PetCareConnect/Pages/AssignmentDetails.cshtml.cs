@@ -33,13 +33,13 @@ namespace PetCareConnect.Pages
 
             return Page();
         }
-        
+
         public IActionResult OnPostChangeAssignment()
         {
             // Redirect to the page where you can change the assignment
-            return RedirectToPage("/ChangeAssignment", new { assignmentId = AssignmentId });
+            return RedirectToPage("/EditAssignment", new { assignmentId = AssignmentId });
         }
-        
+
         public IActionResult OnPostDeleteAssignment()
         {
             // Delete the assignment
@@ -67,7 +67,7 @@ namespace PetCareConnect.Pages
                             EndDate = reader.GetDateTime(4),
                             TaskType = reader.GetString(5),
                             FeedingSchedule = reader.GetString(6),
-                            FoodAmount = reader.GetInt32(7)
+                            FoodAmount = reader.GetString(7)
                         };
                     }
                 }

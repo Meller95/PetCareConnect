@@ -1,0 +1,33 @@
+﻿@page
+@model PetCareConnect.Pages.ChangeEmailModel
+@{
+    ViewData["Title"] = "Change Email";
+}
+
+<h1>Change Email</h1>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label for="currentEmail">Current Email:</label>
+        <input type="email" id="currentEmail" name="CurrentEmail" class="form-control" value="@Model.CurrentEmail" readonly />
+    </div>
+    <div class="form-group">
+        <label for="newEmail">New Email:</label>
+        <input type="email" id="newEmail" name="NewEmail" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="confirmNewEmail">Confirm New Email:</label>
+        <input type="email" id="confirmNewEmail" name="ConfirmNewEmail" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Change Email</button>
+</form>

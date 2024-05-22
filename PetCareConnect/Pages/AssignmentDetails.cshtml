@@ -10,7 +10,7 @@
 <h2>@Model.Assignment.StartDate.ToShortDateString() - @Model.Pet.Name</h2>
 <!-- Add more details as needed -->
 <!-- Buttons to change or delete assignment -->
-<form asp-page-handler="ChangeAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+<form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
     <button type="submit">Change Assignment</button>
 </form>
 

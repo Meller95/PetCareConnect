@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace PetCareConnect.Pages
 {
@@ -14,7 +15,6 @@ namespace PetCareConnect.Pages
 
         [BindProperty]
         public IFormFile UploadedFile { get; set; }
-
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -51,10 +51,6 @@ namespace PetCareConnect.Pages
                     return Page();  // Return to page with error message
                 }
             }
-            else
-            {
-                Pet.PictureUrl = null;  // Handle case where no file is uploaded
-            }
 
             Console.WriteLine("Attempting to save to database"); // Debugging line
 
@@ -62,6 +58,12 @@ namespace PetCareConnect.Pages
             {
                 using (var connection = DB_Connection.GetConnection())
                 {
+                    if (connection == null)
+                    {
+                        Console.WriteLine("Database connection failed.");
+                        return Page();  // Return to page with error message
+                    }
+
                     string query = "INSERT INTO Pets (Name, Species, Breed, Age, Info, OwnerId, PictureUrl) VALUES (@Name, @Species, @Breed, @Age, @Info, @OwnerId, @PictureUrl)";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -73,20 +75,30 @@ namespace PetCareConnect.Pages
                         command.Parameters.AddWithValue("@OwnerId", Pet.OwnerId);
                         command.Parameters.AddWithValue("@PictureUrl", Pet.PictureUrl);
 
-                        command.ExecuteNonQuery();
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            Console.WriteLine("Pet registered successfully.");
+                            return RedirectToPage("/YourProfile");
+                        }
+                        else
+                        {
+                            Console.WriteLine("No rows affected.");
+                            return Page();  // Return to page with error message
+                        }
                     }
                 }
-
-                return RedirectToPage("/YourProfile");
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("SQL Error: " + ex.Message);
+                return Page();  // Return to page with error message
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Database error: " + ex.Message);
+                Console.WriteLine("General Error: " + ex.Message);
                 return Page();  // Return to page with error message
             }
         }
-
-
-
     }
 }
