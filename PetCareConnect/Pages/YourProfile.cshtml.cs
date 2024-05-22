@@ -10,15 +10,29 @@ namespace PetCareConnect.Pages
     {
         public User User { get; set; }
         public List<Pets> Pets { get; set; }
+        public List<Assignment> Assignments { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             var username = HttpContext.Session.GetString("Username");
             if (!string.IsNullOrEmpty(username))
             {
                 User = GetUserDetails(username);
-                Pets = GetPetsForUser(User.UserId);
+                if (User != null)
+                {
+                    Pets = GetPetsForUser(User.UserId);
+                    Assignments = GetAssignmentsForUser(User.UserId);
+                }
+                else
+                {
+                    return RedirectToPage("/SignIn");
+                }
             }
+            else
+            {
+                return RedirectToPage("/SignIn");
+            }
+            return Page();
         }
 
         public IActionResult OnPostDeletePet(int petId)  // Ensure parameter name 'petId' is correctly cased
@@ -49,7 +63,29 @@ namespace PetCareConnect.Pages
             return RedirectToPage("/YourProfile");
         }
 
+        public List<Assignment> GetAssignmentsForUser(int userId)
+        {
+            var assignments = new List<Assignment>();
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("SELECT AssignmentId, PetId, StartDate FROM Assignments WHERE UserId = @UserId", connection);
+                command.Parameters.AddWithValue("@UserId", userId);
 
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        assignments.Add(new Assignment
+                        {
+                            AssignmentId = reader.GetInt32(0),
+                            PetId = reader.GetInt32(1),
+                            StartDate = reader.GetDateTime(2),
+                        });
+                    }
+                }
+            }
+            return assignments;
+        }
 
         private User GetUserDetails(string username)
         {

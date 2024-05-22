@@ -1,24 +1,49 @@
 ﻿@page
 @model PetCareConnect.Pages.YourProfileModel
 <div class="container">
-    <h2 class="mb-3">@Model.User.Username's Profile</h2>
-    <div class="user-details">
-        <p>Full Name: @Model.User.FullName</p>
-        <p>Email: @Model.User.Email</p>
-    </div>
-    
+    @if (Model.User != null)
+    {
+        <h2 class="mb-3">@Model.User.Username's Profile</h2>
+        <div class="user-details">
+            <p>Full Name: @Model.User.FullName</p>
+            <p>Email: @Model.User.Email</p>
+        </div>
 
-<!-- Link to Register Pet Page -->
-<p>
-    <a class="btn btn-primary" asp-page="/RegisterPet">Register Pet</a>
-</p>
+        <!-- Link to Register Pet Page -->
+        <p>
+            <a class="btn btn-primary" asp-page="/RegisterPet">Register Pet</a>
+        </p>
 
-<!-- Link to Create Assignment Page -->
-<p>
-    <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
-</p>
+        <!-- Link to Create Assignment Page -->
+        <p>
+            <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
+        </p>
 
-<!-- Link to Registered Pets Page -->
-<p>
-    <a class="btn btn-primary" asp-page="/RegisteredPets">Registered Pets</a>
-</p>
+        <!-- Link to Registered Pets Page -->
+        <p>
+            <a class="btn btn-primary" asp-page="/RegisteredPets">Registered Pets</a>
+        </p>
+
+        <h2>Your Assignments</h2>
+        <ul>
+            @if (Model.Assignments != null)
+            {
+                @foreach (var assignment in Model.Assignments)
+                {
+                    <li>
+                        @assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name
+                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
+                    </li>
+                }
+            }
+            else
+            {
+                <p>No assignments found.</p>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>User not found.</p>
+    }
+</div>

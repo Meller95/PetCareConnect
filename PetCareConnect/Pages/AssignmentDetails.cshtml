@@ -1,0 +1,19 @@
+﻿@page
+@model PetCareConnect.Pages.AssignmentDetailsModel
+@{
+    ViewData["Title"] = "Assignment Details";
+}
+
+<h1>Assignment Details</h1>
+
+<!-- Display assignment details here -->
+<h2>@Model.Assignment.StartDate.ToShortDateString() - @Model.Pet.Name</h2>
+<!-- Add more details as needed -->
+<!-- Buttons to change or delete assignment -->
+<form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+    <button type="submit">Change Assignment</button>
+</form>
+
+<form asp-page-handler="DeleteAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+    <button type="submit">Delete Assignment</button>
+</form>
