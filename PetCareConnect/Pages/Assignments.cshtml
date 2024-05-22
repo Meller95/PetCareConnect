@@ -1,0 +1,32 @@
+﻿@page
+@model PetCareConnect.Pages.AssignmentsModel
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+<h1>Assignments</h1>
+
+@if (Model.Assignments != null && Model.Assignments.Any())
+{
+    @foreach (var assignment in Model.Assignments)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Assignment</h5>
+                <p class="card-text">
+                    <strong>Pet Name:</strong> @assignment.PetName <br />
+                    <strong>User Name:</strong> @assignment.UserName <br />
+                    <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                    <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                    <strong>Task Type:</strong> @assignment.TaskType <br />
+                    <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
+                    <strong>Food Amount:</strong> @assignment.FoodAmount <br />
+                </p>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>No assignments found.</p>
+}

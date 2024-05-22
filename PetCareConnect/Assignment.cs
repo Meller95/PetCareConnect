@@ -30,5 +30,8 @@ namespace PetCareConnect.Models
 
         [Required]
         public string FoodAmount { get; set; }
+
+        public string PetName { get; set; } // Additional property for Pet Name
+        public string UserName { get; set; } // Additional property for User Name
     }
 }
