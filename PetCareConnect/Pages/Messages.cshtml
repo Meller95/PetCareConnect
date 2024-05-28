@@ -6,10 +6,16 @@
     @foreach (var message in Model.Messages)
     {
         <li>
-            <strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong>
-            <span>@(message.ReceiverUsername == HttpContext.Session.GetString("Username") ? "You" : message.ReceiverUsername)</span> <!-- Display receiver's username -->
-            @message.Content
-            <small>@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small>
+            <div>
+                <strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong>
+            </div>
+            <div>
+                <span>To: @(message.ReceiverUsername == HttpContext.Session.GetString("Username") ? "You" : message.ReceiverUsername)</span> <!-- Display "To: Receiver username" -->
+            </div>
+            <div>@message.Content</div>
+            <div>
+                <small>@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small>
+            </div>
         </li>
     }
 </ul>
