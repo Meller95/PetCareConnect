@@ -13,8 +13,11 @@ namespace PetCareConnect.Pages
 
         public List<Assignment> Assignments { get; set; }
 
+        public int LoggedInUserId { get; private set; }
+
         public void OnGet()
         {
+            LoggedInUserId = HttpContext.Session.GetInt32("UserId") ?? 0; // Retrieve logged-in user ID from session
             Assignments = new List<Assignment>();
 
             try
@@ -58,8 +61,6 @@ namespace PetCareConnect.Pages
                                     Species = reader.GetString(14),
                                     UserName = reader.GetString(15)
                                 };
-                                // Log the assignment details to debug
-                                Console.WriteLine($"AssignmentId: {assignment.AssignmentId}, PetName: {assignment.PetName}, PictureUrl: {assignment.PictureUrl}");
                                 Assignments.Add(assignment);
                             }
                         }
@@ -72,7 +73,6 @@ namespace PetCareConnect.Pages
                 Console.WriteLine(ex.Message);
             }
         }
-
 
         public IActionResult OnPostBookAssignment(int assignmentId)
         {

@@ -1,5 +1,40 @@
 ﻿@page
 @model PetCareConnect.Pages.YourProfileModel
+@{
+    ViewData["Title"] = "Your Profile";
+}
+
+<style>
+    .card-img-container {
+        display: flex;
+    }
+
+        .card-img-container img {
+            width: 50%;
+            height: auto;
+            object-fit: cover;
+        }
+
+    .card-content {
+        width: 50%;
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
+    .card-payment {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #000;
+    }
+</style>
 
 <div class="container">
     @if (Model.User != null)
@@ -18,7 +53,6 @@
         <!-- Link to Create Assignment Page -->
         <p>
             <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
-
         </p>
 
         <!-- Link to Registered Pets Page -->
@@ -49,23 +83,47 @@
             }
         </ul>
 
-        <h2>Assignments You've Booked</h2> <!-- New section -->
-        <ul>
-            @if (Model.BookedAssignments != null)
+        <h2>Assignments You've Booked</h2>
+        @if (Model.BookedAssignments != null && Model.BookedAssignments.Any())
+        {
+            @foreach (var assignment in Model.BookedAssignments)
             {
-                @foreach (var assignment in Model.BookedAssignments)
-                {
-                    <li>
-                        @assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name
-                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
-                    </li>
-                }
+                <div class="card mb-3">
+                    <div class="card-img-container">
+                        @if (!string.IsNullOrEmpty(assignment.PictureUrl))
+                        {
+                            <img src="@assignment.PictureUrl" class="card-img-top" alt="Pet Image">
+                        }
+                        <div class="card-content">
+                            <h5 class="card-title">@assignment.Title</h5>
+                            <p class="card-text">
+                                <strong>Pet Name:</strong> @assignment.PetName <br />
+                                <strong>User Name:</strong> @assignment.UserName <br />
+                                <strong>Species:</strong> @assignment.Species <br />
+                                <strong>City:</strong> @assignment.City <br />
+                                <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                                <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                                <strong>Task Type:</strong> @assignment.TaskType <br />
+                                <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
+                                <strong>Food Amount:</strong> @assignment.FoodAmount <br />
+                                <strong>Comments:</strong> @assignment.Comments <br />
+                            </p>
+                            <p class="card-payment">
+                                <strong>Payment:</strong> $@assignment.Payment
+                            </p>
+                            <form method="post" asp-page-handler="CancelAssignment">
+                                <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                <button type="submit" class="btn btn-danger">Cancel Assignment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             }
-            else
-            {
-                <p>No booked assignments found.</p>
-            }
-        </ul>
+        }
+        else
+        {
+            <p>No booked assignments found.</p>
+        }
     }
     else
     {
