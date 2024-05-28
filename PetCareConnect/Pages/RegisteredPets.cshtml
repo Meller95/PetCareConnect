@@ -16,6 +16,7 @@
                 <th>Breed</th>
                 <th>Age</th>
                 <th>Info</th>
+                <th>Delete</th> <!-- Add Action column -->
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,11 @@
                     <td>@pet.Breed</td>
                     <td>@pet.Age</td>
                     <td>@pet.Info</td>
+                    <td>
+                        <form method="post" asp-page-handler="DeletePet" asp-route-id="@pet.PetId">
+                            <button type="submit" class="btn btn-danger">X</button>
+                        </form>
+                    </td> <!-- Add Delete button -->
                 </tr>
             }
         </tbody>
@@ -41,4 +47,8 @@
 else
 {
     <p>No pets registered.</p>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

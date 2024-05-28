@@ -1,5 +1,6 @@
 ﻿@page
 @model PetCareConnect.Pages.YourProfileModel
+
 <div class="container">
     @if (Model.User != null)
     {
@@ -17,6 +18,7 @@
         <!-- Link to Create Assignment Page -->
         <p>
             <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
+
         </p>
 
         <!-- Link to Registered Pets Page -->
@@ -39,6 +41,24 @@
             else
             {
                 <p>No assignments found.</p>
+            }
+        </ul>
+
+        <h2>Assignments You've Booked</h2> <!-- New section -->
+        <ul>
+            @if (Model.BookedAssignments != null)
+            {
+                @foreach (var assignment in Model.BookedAssignments)
+                {
+                    <li>
+                        @assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name
+                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
+                    </li>
+                }
+            }
+            else
+            {
+                <p>No booked assignments found.</p>
             }
         </ul>
     }

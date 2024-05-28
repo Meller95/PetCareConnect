@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using PetCareConnect.Models;
-using System.Security.Claims;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System;
 
@@ -46,18 +44,6 @@ namespace PetCareConnect.Pages
 
         public IActionResult OnPost()
         {
-            if (!ModelState.IsValid)
-            {
-                foreach (var modelState in ModelState.Values)
-                {
-                    foreach (var error in modelState.Errors)
-                    {
-                        Console.WriteLine(error.ErrorMessage);
-                    }
-                }
-                return Page();
-            }
-
             var LoggedInUserId = HttpContext.Session.GetInt32("UserId");
 
             if (LoggedInUserId == null)
@@ -69,30 +55,46 @@ namespace PetCareConnect.Pages
             Assignment.UserId = (int)LoggedInUserId; // Set the UserId in Assignment
 
             // Insert the assignment into the database
-            using (SqlConnection connection = DB_Connection.GetConnection())
+            try
             {
-                if (connection != null)
+                using (SqlConnection connection = DB_Connection.GetConnection())
                 {
-                    string query = "INSERT INTO Assignments (UserId, PetId, StartDate, EndDate, TaskType, FeedingSchedule, FoodAmount) VALUES (@UserId, @PetId, @StartDate, @EndDate, @TaskType, @FeedingSchedule, @FoodAmount)";
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    if (connection != null)
                     {
-                        command.Parameters.AddWithValue("@UserId", Assignment.UserId);
-                        command.Parameters.AddWithValue("@PetId", Assignment.PetId);
-                        command.Parameters.AddWithValue("@StartDate", Assignment.StartDate);
-                        command.Parameters.AddWithValue("@EndDate", Assignment.EndDate);
-                        command.Parameters.AddWithValue("@TaskType", Assignment.TaskType);
-                        command.Parameters.AddWithValue("@FeedingSchedule", Assignment.FeedingSchedule);
-                        command.Parameters.AddWithValue("@FoodAmount", Assignment.FoodAmount);
+                        string query = "INSERT INTO Assignments (UserId, PetId, StartDate, EndDate, TaskType, FeedingSchedule, FoodAmount, Title, City, Comments, Payment) VALUES (@UserId, @PetId, @StartDate, @EndDate, @TaskType, @FeedingSchedule, @FoodAmount, @Title, @City, @Comments, @Payment)";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@UserId", Assignment.UserId);
+                            command.Parameters.AddWithValue("@PetId", Assignment.PetId);
+                            command.Parameters.AddWithValue("@StartDate", Assignment.StartDate);
+                            command.Parameters.AddWithValue("@EndDate", Assignment.EndDate);
+                            command.Parameters.AddWithValue("@TaskType", Assignment.TaskType);
+                            command.Parameters.AddWithValue("@FeedingSchedule", Assignment.FeedingSchedule);
+                            command.Parameters.AddWithValue("@FoodAmount", Assignment.FoodAmount);
+                            command.Parameters.AddWithValue("@Title", Assignment.Title);
+                            command.Parameters.AddWithValue("@City", Assignment.City);
+                            command.Parameters.AddWithValue("@Comments", Assignment.Comments);
+                            command.Parameters.AddWithValue("@Payment", Assignment.Payment);
 
-                        command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unable to connect to the database.");
+                        return Page();
                     }
                 }
-                else
-                {
-                    // Connection failed
-                    Console.WriteLine("Unable to connect to the database.");
-                    return Page();
-                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("SQL Error: " + ex.Message);
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("General Error: " + ex.Message);
+                return Page();
             }
 
             return RedirectToPage("/YourProfile");

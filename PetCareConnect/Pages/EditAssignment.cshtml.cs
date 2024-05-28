@@ -48,11 +48,6 @@ namespace PetCareConnect.Pages
 
         public IActionResult OnPost()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
             var LoggedInUserId = HttpContext.Session.GetInt32("UserId");
             if (LoggedInUserId == null)
             {
@@ -62,31 +57,64 @@ namespace PetCareConnect.Pages
             Assignment.UserId = (int)LoggedInUserId; // Ensure UserId is set
 
             // Update the assignment in the database
-            using (SqlConnection connection = DB_Connection.GetConnection())
+            try
             {
-                string query = "UPDATE Assignments SET PetId = @PetId, StartDate = @StartDate, EndDate = @EndDate, TaskType = @TaskType, FeedingSchedule = @FeedingSchedule, FoodAmount = @FoodAmount WHERE AssignmentId = @AssignmentId";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlConnection connection = DB_Connection.GetConnection())
                 {
-                    command.Parameters.AddWithValue("@PetId", Assignment.PetId);
-                    command.Parameters.AddWithValue("@StartDate", Assignment.StartDate);
-                    command.Parameters.AddWithValue("@EndDate", Assignment.EndDate);
-                    command.Parameters.AddWithValue("@TaskType", Assignment.TaskType);
-                    command.Parameters.AddWithValue("@FeedingSchedule", Assignment.FeedingSchedule);
-                    command.Parameters.AddWithValue("@FoodAmount", Assignment.FoodAmount);
-                    command.Parameters.AddWithValue("@AssignmentId", Assignment.AssignmentId);
+                    if (connection != null)
+                    {
+                        string query = "UPDATE Assignments SET PetId = @PetId, StartDate = @StartDate, EndDate = @EndDate, TaskType = @TaskType, FeedingSchedule = @FeedingSchedule, FoodAmount = @FoodAmount, Title = @Title, City = @City, Comments = @Comments, Payment = @Payment WHERE AssignmentId = @AssignmentId";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@PetId", Assignment.PetId);
+                            command.Parameters.AddWithValue("@StartDate", Assignment.StartDate);
+                            command.Parameters.AddWithValue("@EndDate", Assignment.EndDate);
+                            command.Parameters.AddWithValue("@TaskType", Assignment.TaskType);
+                            command.Parameters.AddWithValue("@FeedingSchedule", Assignment.FeedingSchedule);
+                            command.Parameters.AddWithValue("@FoodAmount", Assignment.FoodAmount);
+                            command.Parameters.AddWithValue("@Title", Assignment.Title);
+                            command.Parameters.AddWithValue("@City", Assignment.City);
+                            command.Parameters.AddWithValue("@Comments", Assignment.Comments);
+                            command.Parameters.AddWithValue("@Payment", Assignment.Payment);
+                            command.Parameters.AddWithValue("@AssignmentId", Assignment.AssignmentId);
 
-                    command.ExecuteNonQuery();
+                            int rowsAffected = command.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                Console.WriteLine("Assignment updated successfully.");
+                                return RedirectToPage("/YourProfile");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No rows affected.");
+                                return Page();  // Return to page with error message
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unable to connect to the database.");
+                        return Page();
+                    }
                 }
             }
-
-            return RedirectToPage("/YourProfile");
+            catch (SqlException ex)
+            {
+                Console.WriteLine("SQL Error: " + ex.Message);
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("General Error: " + ex.Message);
+                return Page();
+            }
         }
 
         private Assignment GetAssignmentDetails(int assignmentId)
         {
             using (var connection = DB_Connection.GetConnection())
             {
-                var command = new SqlCommand("SELECT * FROM Assignments WHERE AssignmentId = @AssignmentId", connection);
+                var command = new SqlCommand("SELECT AssignmentId, UserId, PetId, StartDate, EndDate, TaskType, FeedingSchedule, FoodAmount, Title, City, Comments, Payment FROM Assignments WHERE AssignmentId = @AssignmentId", connection);
                 command.Parameters.AddWithValue("@AssignmentId", assignmentId);
 
                 using (var reader = command.ExecuteReader())
@@ -102,7 +130,11 @@ namespace PetCareConnect.Pages
                             EndDate = reader.GetDateTime(4),
                             TaskType = reader.GetString(5),
                             FeedingSchedule = reader.GetString(6),
-                            FoodAmount = reader.GetString(7)
+                            FoodAmount = reader.GetString(7),
+                            Title = reader.IsDBNull(8) ? null : reader.GetString(8),
+                            City = reader.IsDBNull(9) ? null : reader.GetString(9),
+                            Comments = reader.IsDBNull(10) ? null : reader.GetString(10),
+                            Payment = reader.GetDecimal(11)
                         };
                     }
                 }

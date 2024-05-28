@@ -4,16 +4,26 @@
     ViewData["Title"] = "Assignment Details";
 }
 
-<h1>Assignment Details</h1>
+<div class="container">
+    <h1>Assignment Details</h1>
 
-<!-- Display assignment details here -->
-<h2>@Model.Assignment.StartDate.ToShortDateString() - @Model.Pet.Name</h2>
-<!-- Add more details as needed -->
-<!-- Buttons to change or delete assignment -->
-<form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
-    <button type="submit">Change Assignment</button>
-</form>
+    <!-- Display assignment details here -->
+    <div class="card">
+        <div class="card-body">
+            <h2>@Model.Assignment.StartDate.ToShortDateString() - @Model.Pet.Name</h2>
+            <!-- Add more details as needed -->
+        </div>
+    </div>
 
-<form asp-page-handler="DeleteAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
-    <button type="submit">Delete Assignment</button>
-</form>
+    <!-- Buttons to change or delete assignment -->
+    <div class="mt-3">
+    <form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+        <button type="submit" class="btn btn-primary mb-2">Change Assignment</button>
+    </form>
+
+    <form asp-page-handler="DeleteAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+        <button type="submit" class="btn btn-danger ml-2 mb-2">Delete Assignment</button>
+    </form>
+</div>
+
+</div>

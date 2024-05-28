@@ -1,4 +1,7 @@
 using PetCareConnect.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +29,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession(); // Enable session before UseRouting and after UseStaticFiles
+app.UseSession(); // Enable session after UseRouting and UseStaticFiles
 app.UseAuthorization();
 
 app.MapRazorPages();

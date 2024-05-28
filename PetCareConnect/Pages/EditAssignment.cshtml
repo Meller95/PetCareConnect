@@ -7,6 +7,7 @@
 <h1>Edit Assignment</h1>
 <div class="container mt-4">
     <form method="post">
+        <input type="hidden" asp-for="Assignment.AssignmentId" />
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
         <div class="form-group">
             <label>Pet:</label>
@@ -37,6 +38,26 @@
             <label>Food Amount:</label>
             <input type="text" asp-for="Assignment.FoodAmount" class="form-control" />
             <span asp-validation-for="Assignment.FoodAmount" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Title:</label>
+            <input type="text" asp-for="Assignment.Title" class="form-control" />
+            <span asp-validation-for="Assignment.Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>City:</label>
+            <input type="text" asp-for="Assignment.City" class="form-control" />
+            <span asp-validation-for="Assignment.City" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Comments:</label>
+            <textarea asp-for="Assignment.Comments" class="form-control"></textarea>
+            <span asp-validation-for="Assignment.Comments" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Payment:</label> <!-- New input for Payment -->
+            <input type="number" asp-for="Assignment.Payment" class="form-control" />
+            <span asp-validation-for="Assignment.Payment" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>

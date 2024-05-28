@@ -11,6 +11,7 @@ namespace PetCareConnect.Pages
         public User User { get; set; }
         public List<Pets> Pets { get; set; }
         public List<Assignment> Assignments { get; set; }
+        public List<Assignment> BookedAssignments { get; set; } // New
 
         public IActionResult OnGet()
         {
@@ -22,6 +23,7 @@ namespace PetCareConnect.Pages
                 {
                     Pets = GetPetsForUser(User.UserId);
                     Assignments = GetAssignmentsForUser(User.UserId);
+                    BookedAssignments = GetBookedAssignmentsForUser(User.UserId); // New
                 }
                 else
                 {
@@ -68,7 +70,7 @@ namespace PetCareConnect.Pages
             var assignments = new List<Assignment>();
             using (var connection = DB_Connection.GetConnection())
             {
-                var command = new SqlCommand("SELECT AssignmentId, PetId, StartDate FROM Assignments WHERE UserId = @UserId", connection);
+                var command = new SqlCommand("SELECT AssignmentId, PetId, StartDate, Title, City, EndDate FROM Assignments WHERE UserId = @UserId", connection);
                 command.Parameters.AddWithValue("@UserId", userId);
 
                 using (var reader = command.ExecuteReader())
@@ -80,6 +82,36 @@ namespace PetCareConnect.Pages
                             AssignmentId = reader.GetInt32(0),
                             PetId = reader.GetInt32(1),
                             StartDate = reader.GetDateTime(2),
+                            Title = reader.GetString(3),
+                            City = reader.GetString(4),
+                            EndDate = reader.GetDateTime(5)
+                        });
+                    }
+                }
+            }
+            return assignments;
+        }
+
+        public List<Assignment> GetBookedAssignmentsForUser(int userId)
+        {
+            var assignments = new List<Assignment>();
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("SELECT AssignmentId, PetId, StartDate, Title, City, EndDate FROM Assignments WHERE BookedByUserId = @UserId", connection);
+                command.Parameters.AddWithValue("@UserId", userId);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        assignments.Add(new Assignment
+                        {
+                            AssignmentId = reader.GetInt32(0),
+                            PetId = reader.GetInt32(1),
+                            StartDate = reader.GetDateTime(2),
+                            Title = reader.GetString(3),
+                            City = reader.GetString(4),
+                            EndDate = reader.GetDateTime(5)
                         });
                     }
                 }
@@ -111,14 +143,12 @@ namespace PetCareConnect.Pages
             return null; // or handle as needed if no user is found
         }
 
-
         private List<Pets> GetPetsForUser(int userId)
         {
             var pets = new List<Pets>();
             using (var connection = DB_Connection.GetConnection())
             {
                 var command = new SqlCommand("SELECT PetId, Name, Species, Breed, Age, Info FROM Pets WHERE OwnerId = @OwnerId", connection);
-
                 command.Parameters.AddWithValue("@OwnerId", userId);
 
                 using (var reader = command.ExecuteReader())
@@ -127,9 +157,9 @@ namespace PetCareConnect.Pages
                     {
                         pets.Add(new Pets
                         {
-                            PetId = reader.GetInt32(0), // Assuming 'Id' cannot be null
-                            Name = reader.GetString(1), // Assuming 'Name' cannot be null
-                            Species = reader.GetString(2), // Assuming 'Species' cannot be null
+                            PetId = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Species = reader.GetString(2),
                             Breed = reader.IsDBNull(3) ? null : reader.GetString(3),
                             Age = reader.GetInt32(4),
                             Info = reader.IsDBNull(5) ? null : reader.GetString(5)
