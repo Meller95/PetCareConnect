@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using PetCareConnect.Models;
@@ -19,13 +20,34 @@ namespace PetCareConnect.Pages
             RegisteredPets = GetPetsForUser((int)LoggedInUserId);
         }
 
+        public IActionResult OnPostDeletePet(int id)
+        {
+            // Delete pet from the database
+            try
+            {
+                using (var connection = DB_Connection.GetConnection())
+                {
+                    var command = new SqlCommand("DELETE FROM Pets WHERE PetId = @PetId", connection);
+                    command.Parameters.AddWithValue("@PetId", id);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex)
+            {
+                // Handle exception
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+
+            return RedirectToPage();
+        }
+
         private List<Pets> GetPetsForUser(int userId)
         {
             var pets = new List<Pets>();
             using (var connection = DB_Connection.GetConnection())
             {
                 var command = new SqlCommand("SELECT PetId, Name, Species, Breed, Age, Info, PictureUrl FROM Pets WHERE OwnerId = @OwnerId", connection);
-
                 command.Parameters.AddWithValue("@OwnerId", userId);
 
                 using (var reader = command.ExecuteReader())
