@@ -7,12 +7,12 @@
     {
         <li>
             <strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong>
+            <span>@(message.ReceiverUsername == HttpContext.Session.GetString("Username") ? "You" : message.ReceiverUsername)</span> <!-- Display receiver's username -->
             @message.Content
             <small>@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small>
         </li>
     }
 </ul>
-
 
 <!-- Button to compose a new message -->
 <a asp-page="/NewMessage" class="btn btn-primary">New Message</a>
