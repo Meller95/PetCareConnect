@@ -1,0 +1,18 @@
+﻿@page
+@model PetCareConnect.Pages.MessagesModel
+
+<h2>Messages</h2>
+<ul>
+    @foreach (var message in Model.Messages)
+    {
+        <li>
+            <strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong>
+            @message.Content
+            <small>@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small>
+        </li>
+    }
+</ul>
+
+
+<!-- Button to compose a new message -->
+<a asp-page="/NewMessage" class="btn btn-primary">New Message</a>

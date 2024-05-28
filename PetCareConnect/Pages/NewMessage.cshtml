@@ -1,0 +1,22 @@
+﻿@page
+@model PetCareConnect.Pages.NewMessageModel
+@{
+    ViewData["Title"] = "New Message";
+}
+
+<div class="container">
+    <h2>New Message</h2>
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="ReceiverUsername"></label>
+            <input asp-for="ReceiverUsername" class="form-control" />
+            <span asp-validation-for="ReceiverUsername" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content"></label>
+            <textarea asp-for="Content" class="form-control"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
