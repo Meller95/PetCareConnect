@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
-using PetCareConnect.Models;
 using BCrypt.Net;
 
 namespace PetCareConnect.Pages
@@ -23,6 +22,11 @@ namespace PetCareConnect.Pages
             if (IsLoginValid(Username, Password))
             {
                 HttpContext.Session.SetString("Username", Username);
+
+                // Get the UserId from the username
+                int userId = GetUserIdByUsername(Username);
+                HttpContext.Session.SetInt32("UserId", userId);
+
                 return RedirectToPage("/YourProfile");
             }
             else
@@ -46,6 +50,17 @@ namespace PetCareConnect.Pages
                     return true;
                 }
                 return false;
+            }
+        }
+
+        private int GetUserIdByUsername(string username)
+        {
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("SELECT UserId FROM Users WHERE LOWER(Username) = LOWER(@Username)", connection);
+                command.Parameters.AddWithValue("@Username", username);
+
+                return (int)command.ExecuteScalar();
             }
         }
     }

@@ -11,12 +11,12 @@
     public string Title { get; set; }
     public string City { get; set; }
     public string Comments { get; set; }
-    public decimal Payment { get; set; } // Add Payment
-
-    // Foreign key properties
+    public decimal Payment { get; set; }
     public string PictureUrl { get; set; }
     public string PetName { get; set; }
-    public string Species { get; set; } // Add Species
+    public string Species { get; set; }
     public string UserName { get; set; }
- 
+    public bool BookingConfirmed { get; set; }
+    public int? BookedByUserId { get; set; } // New field for the ID of the user who booked the assignment
+    public string BookedByUsername { get; set; } // New field for the username of the user who booked the assignment
 }

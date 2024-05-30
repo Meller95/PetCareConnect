@@ -54,10 +54,10 @@
 
     .assignments-list {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: 1fr 1fr 1fr 1fr; /* Adjust the width to have four columns */
         gap: 10px;
         align-items: center;
-        width: 50%; /* Adjust the width to make it more compact */
+        width: 100%; /* Adjust the width to make it more compact */
     }
 
     .assignment-item {
@@ -102,6 +102,30 @@
                         <div>
                             <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
                         </div>
+                        <div>
+                            @if (assignment.BookedByUserId != null)
+                            {
+                                <span>Booked by: @assignment.BookedByUsername</span>
+                                @if (!assignment.BookingConfirmed)
+                                {
+                                    <form method="post" asp-page-handler="ConfirmBooking">
+                                        <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                        <button type="submit" class="btn btn-success">Confirm Booking</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-page-handler="CancelBooking">
+                                        <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                        <button type="submit" class="btn btn-danger">Cancel Booking</button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">Not Booked</span>
+                            }
+                        </div>
                     </div>
                 }
             }
@@ -139,6 +163,14 @@
                             <p class="card-payment">
                                 <strong>Payment:</strong> $@assignment.Payment
                             </p>
+                            @if (!assignment.BookingConfirmed)
+                            {
+                                <span class="badge badge-warning">Not Confirmed</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-success">Confirmed</span>
+                            }
                             <form method="post" asp-page-handler="CancelAssignment">
                                 <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
                                 <button type="submit" class="btn btn-danger">Cancel Assignment</button>

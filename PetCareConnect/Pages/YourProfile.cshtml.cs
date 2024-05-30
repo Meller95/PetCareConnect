@@ -37,7 +37,7 @@ namespace PetCareConnect.Pages
             return Page();
         }
 
-        public IActionResult OnPostDeletePet(int petId)  // Ensure parameter name 'petId' is correctly cased
+        public IActionResult OnPostDeletePet(int petId)
         {
             if (petId <= 0)
             {
@@ -77,7 +77,7 @@ namespace PetCareConnect.Pages
             {
                 using (var connection = DB_Connection.GetConnection())
                 {
-                    var command = new SqlCommand("UPDATE Assignments SET BookedByUserId = NULL WHERE AssignmentId = @AssignmentId AND BookedByUserId = @UserId", connection);
+                    var command = new SqlCommand("UPDATE Assignments SET BookedByUserId = NULL, BookingConfirmed = 0 WHERE AssignmentId = @AssignmentId AND BookedByUserId = @UserId", connection);
                     command.Parameters.AddWithValue("@UserId", loggedInUserId);
                     command.Parameters.AddWithValue("@AssignmentId", assignmentId);
 
@@ -106,12 +106,99 @@ namespace PetCareConnect.Pages
             }
         }
 
+        public IActionResult OnPostConfirmBooking(int assignmentId)
+        {
+            var loggedInUserId = HttpContext.Session.GetInt32("UserId");
+            if (loggedInUserId == null)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            try
+            {
+                using (var connection = DB_Connection.GetConnection())
+                {
+                    var command = new SqlCommand("UPDATE Assignments SET BookingConfirmed = 1 WHERE AssignmentId = @AssignmentId AND UserId = @UserId", connection);
+                    command.Parameters.AddWithValue("@UserId", loggedInUserId);
+                    command.Parameters.AddWithValue("@AssignmentId", assignmentId);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Booking confirmed successfully.");
+                        return RedirectToPage("/YourProfile");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No rows affected.");
+                        return Page();  // Return to page with error message
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("SQL Error: " + ex.Message);
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("General Error: " + ex.Message);
+                return Page();
+            }
+        }
+
+        public IActionResult OnPostCancelBooking(int assignmentId)
+        {
+            var loggedInUserId = HttpContext.Session.GetInt32("UserId");
+            if (loggedInUserId == null)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            try
+            {
+                using (var connection = DB_Connection.GetConnection())
+                {
+                    var command = new SqlCommand("UPDATE Assignments SET BookingConfirmed = 0 WHERE AssignmentId = @AssignmentId AND UserId = @UserId", connection);
+                    command.Parameters.AddWithValue("@UserId", loggedInUserId);
+                    command.Parameters.AddWithValue("@AssignmentId", assignmentId);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Booking canceled successfully.");
+                        return RedirectToPage("/YourProfile");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No rows affected.");
+                        return Page();  // Return to page with error message
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("SQL Error: " + ex.Message);
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("General Error: " + ex.Message);
+                return Page();
+            }
+        }
+
         public List<Assignment> GetAssignmentsForUser(int userId)
         {
             var assignments = new List<Assignment>();
             using (var connection = DB_Connection.GetConnection())
             {
-                var command = new SqlCommand("SELECT AssignmentId, PetId, StartDate, Title, City, EndDate FROM Assignments WHERE UserId = @UserId", connection);
+                var command = new SqlCommand(@"
+                    SELECT a.AssignmentId, a.PetId, a.StartDate, a.Title, a.City, a.EndDate, a.BookedByUserId, u.Username AS BookedByUsername, 
+                    ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed
+                    FROM Assignments a
+                    LEFT JOIN Users u ON a.BookedByUserId = u.UserId
+                    WHERE a.UserId = @UserId", connection);
                 command.Parameters.AddWithValue("@UserId", userId);
 
                 using (var reader = command.ExecuteReader())
@@ -125,7 +212,10 @@ namespace PetCareConnect.Pages
                             StartDate = reader.GetDateTime(2),
                             Title = reader.GetString(3),
                             City = reader.GetString(4),
-                            EndDate = reader.GetDateTime(5)
+                            EndDate = reader.GetDateTime(5),
+                            BookedByUserId = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6),
+                            BookedByUsername = reader.IsDBNull(7) ? null : reader.GetString(7),
+                            BookingConfirmed = reader.GetBoolean(8)
                         });
                     }
                 }
@@ -141,7 +231,8 @@ namespace PetCareConnect.Pages
                 var command = new SqlCommand(@"
                     SELECT a.AssignmentId, a.UserId, a.PetId, a.StartDate, a.EndDate, a.TaskType,
                            a.FeedingSchedule, a.FoodAmount, a.Title, a.City, a.Comments, a.Payment,
-                           p.PictureUrl, p.Name AS PetName, p.Species, u.Username AS UserName
+                           p.PictureUrl, p.Name AS PetName, p.Species, u.Username AS UserName, 
+                           ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed
                     FROM Assignments a
                     JOIN Pets p ON a.PetId = p.PetId
                     JOIN Users u ON a.UserId = u.UserId
@@ -169,7 +260,8 @@ namespace PetCareConnect.Pages
                             PictureUrl = reader.IsDBNull(12) ? null : reader.GetString(12),
                             PetName = reader.GetString(13),
                             Species = reader.GetString(14),
-                            UserName = reader.GetString(15)
+                            UserName = reader.GetString(15),
+                            BookingConfirmed = reader.GetBoolean(16)  // Get the BookingConfirmed status
                         });
                     }
                 }

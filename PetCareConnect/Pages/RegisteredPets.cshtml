@@ -4,6 +4,24 @@
     ViewData["Title"] = "Registered Pets";
 }
 
+<style>
+    body {
+        color: white; /* Makes all text white */
+    }
+
+    .table {
+        width: 100%;
+    }
+
+        .table th, .table td {
+            color: white; /* Makes table header and data text white */
+        }
+
+    .btn-danger {
+        color: white; /* Makes button text white */
+    }
+</style>
+
 <h1>Registered Pets</h1>
 @if (Model.RegisteredPets != null && Model.RegisteredPets.Any())
 {
