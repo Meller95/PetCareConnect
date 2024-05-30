@@ -72,7 +72,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">PetCareConnect</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -82,18 +82,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                         @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Feedback">Feedback</a>
+                                <a class="nav-link" asp-area="" asp-page="/Feedback">Feedback</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Assignments">Assignments</a>
+                                <a class="nav-link" asp-area="" asp-page="/Assignments">Assignments</a>
                             </li>
                         }
                     </ul>
@@ -101,13 +101,13 @@
                         @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/YourProfile">Your Profile</a>
+                                <a class="nav-link" asp-page="/YourProfile">Your Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Settings">Settings</a>
+                                <a class="nav-link" asp-page="/Settings">Settings</a>
                             </li>
                             <li class="nav-item">
-                                <span class="nav-link text-dark">Welcome, @Context.Session.GetString("Username")!</span>
+                                <span class="nav-link">Welcome, @Context.Session.GetString("Username")!</span>
                             </li>
                             <li class="nav-item">
                                 <form method="post" asp-page="/Logout">
@@ -118,7 +118,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/SignIn">Sign In</a>
+                                <a class="nav-link" asp-page="/SignIn">Sign In</a>
                             </li>
                         }
                     </ul>

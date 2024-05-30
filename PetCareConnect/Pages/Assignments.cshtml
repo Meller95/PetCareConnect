@@ -4,42 +4,6 @@
     ViewData["Title"] = "Assignments";
 }
 
-<style>
-    .card-img-container {
-        display: flex;
-    }
-
-        .card-img-container img {
-            width: 50%;
-            height: auto;
-            object-fit: cover;
-        }
-
-    .card-content {
-        width: 50%;
-        padding: 20px;
-    }
-
-    .card-title {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .card-text {
-        font-size: 1rem;
-    }
-
-    .card-payment {
-        font-size: 1.25rem;
-        font-weight: bold;
-        color: #000;
-    }
-
-    .card.highlight {
-        border: 2px solid green;
-    }
-</style>
-
 <h1>Assignments</h1>
 
 <form method="get">
@@ -54,37 +18,37 @@
     @foreach (var assignment in Model.Assignments)
     {
         var isOwnAssignment = Model.LoggedInUserId == assignment.UserId;
-        <div class="card mb-3 @(isOwnAssignment ? "highlight" : "")">
+        <div class="card @(isOwnAssignment ? "highlight" : "")">
             <div class="card-img-container">
                 @if (!string.IsNullOrEmpty(assignment.PictureUrl))
                 {
                     <img src="@assignment.PictureUrl" class="card-img-top" alt="Pet Image">
                 }
-                <div class="card-content">
-                    <h5 class="card-title">@assignment.Title</h5>
-                    <p class="card-text">
-                        <strong>Pet Name:</strong> @assignment.PetName <br />
-                        <strong>User Name:</strong> @assignment.UserName <br />
-                        <strong>Species:</strong> @assignment.Species <br />
-                        <strong>City:</strong> @assignment.City <br />
-                        <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
-                        <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
-                        <strong>Task Type:</strong> @assignment.TaskType <br />
-                        <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
-                        <strong>Food Amount:</strong> @assignment.FoodAmount <br />
-                        <strong>Comments:</strong> @assignment.Comments <br />
-                    </p>
-                    <p class="card-payment">
-                        <strong>Payment:</strong> $@assignment.Payment
-                    </p>
-                    @if (!isOwnAssignment)
-                    {
-                        <form method="post" asp-page-handler="BookAssignment">
-                            <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
-                            <button type="submit" class="btn btn-success">Book Assignment</button>
-                        </form>
-                    }
-                </div>
+            </div>
+            <div class="card-content">
+                <h5 class="card-title">@assignment.Title</h5>
+                <p class="card-text">
+                    <strong>Pet Name:</strong> @assignment.PetName <br />
+                    <strong>User Name:</strong> @assignment.UserName <br />
+                    <strong>Species:</strong> @assignment.Species <br />
+                    <strong>City:</strong> @assignment.City <br />
+                    <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                    <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                    <strong>Task Type:</strong> @assignment.TaskType <br />
+                    <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
+                    <strong>Food Amount:</strong> @assignment.FoodAmount <br />
+                    <strong>Comments:</strong> @assignment.Comments <br />
+                </p>
+                <p class="card-payment">
+                    <strong>Payment:</strong> $@assignment.Payment
+                </p>
+                @if (!isOwnAssignment)
+                {
+                    <form method="post" asp-page-handler="BookAssignment">
+                        <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                        <button type="submit" class="btn btn-success">Book Assignment</button>
+                    </form>
+                }
             </div>
         </div>
     }

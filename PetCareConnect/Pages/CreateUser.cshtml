@@ -2,14 +2,15 @@
 @model PetCareConnect.Pages.CreateUserModel
 
 <h2 class="mb-3">Create a New User</h2>
-<form method="post">
+<form method="post" onsubmit="return validatePassword()">
     <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" asp-for="NewUser.Username" class="form-control" required />
     </div>
     <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" asp-for="NewUser.PasswordHash" class="form-control" required />
+        <input type="password" asp-for="NewUser.PasswordHash" class="form-control" id="password" required />
+        <small id="passwordHelp" class="form-text text-muted">Password must be at least 8 characters long and contain both uppercase and lowercase letters.</small>
     </div>
     <div class="form-group">
         <label for="email">Email:</label>
@@ -26,3 +27,21 @@
 {
     <div class="alert alert-info">@Model.Message</div>
 }
+
+<script>
+    function validatePassword() {
+        const password = document.getElementById('password').value;
+        const passwordHelp = document.getElementById('passwordHelp');
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+        if (!passwordPattern.test(password)) {
+            passwordHelp.classList.add('text-danger');
+            passwordHelp.classList.remove('text-muted');
+            return false;
+        } else {
+            passwordHelp.classList.remove('text-danger');
+            passwordHelp.classList.add('text-muted');
+            return true;
+        }
+    }
+</script>

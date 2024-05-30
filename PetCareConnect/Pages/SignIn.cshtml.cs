@@ -1,31 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
-using System;
+using PetCareConnect.Models;
+using BCrypt.Net;
 
-public class SignInModel : PageModel
+namespace PetCareConnect.Pages
 {
-    [BindProperty]
-    public string Username { get; set; }
-
-    [BindProperty]
-    public string Password { get; set; }
-
-    public string ErrorMessage { get; set; }
-
-    public void OnGet()
+    public class SignInModel : PageModel
     {
-    }
+        [BindProperty]
+        public string Username { get; set; }
+        [BindProperty]
+        public string Password { get; set; }
+        public string ErrorMessage { get; set; }
 
-    public IActionResult OnPost()
-    {
-        if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password))
+        public void OnGet()
         {
-            var (isValid, userId) = IsValidUser(Username, Password);
-            if (isValid)
+        }
+
+        public IActionResult OnPost()
+        {
+            if (IsLoginValid(Username, Password))
             {
-                HttpContext.Session.SetInt32("UserId", userId.Value); // Store user ID in session
-                HttpContext.Session.SetString("Username", Username); // Optionally store username as well
+                HttpContext.Session.SetString("Username", Username);
                 return RedirectToPage("/YourProfile");
             }
             else
@@ -35,35 +32,21 @@ public class SignInModel : PageModel
             }
         }
 
-        ErrorMessage = "Username and password are required.";
-        return Page();
-    }
-
-
-    private (bool, int?) IsValidUser(string username, string password)
-    {
-        using (var connection = DB_Connection.GetConnection())
+        private bool IsLoginValid(string username, string password)
         {
-            // Prepare the SQL command to retrieve the user ID and hashed password
-            var command = new SqlCommand("SELECT UserId, Password FROM Users WHERE Username = @Username", connection);
-            command.Parameters.AddWithValue("@Username", username);
-
-            using (var reader = command.ExecuteReader())
+            using (var connection = DB_Connection.GetConnection())
             {
-                if (reader.Read())
-                {
-                    int userId = reader.GetInt32(0);
-                    string storedHash = reader.GetString(1);
+                var command = new SqlCommand("SELECT Password FROM Users WHERE LOWER(Username) = LOWER(@Username)", connection);
+                command.Parameters.AddWithValue("@Username", username);
 
-                    if (BCrypt.Net.BCrypt.Verify(password, storedHash))
-                    {
-                        return (true, userId);
-                    }
+                var dbPassword = command.ExecuteScalar() as string;
+
+                if (dbPassword != null && BCrypt.Net.BCrypt.Verify(password, dbPassword))
+                {
+                    return true;
                 }
+                return false;
             }
         }
-        return (false, null);
     }
-
-
 }
