@@ -1,6 +1,22 @@
 ﻿@page
 @model SignInModel
 
+<style>
+    .btn-auto-width {
+        width: auto;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .form-actions .btn-secondary {
+            margin-left: auto;
+        }
+</style>
+
 <div class="container">
     <h2 class="mb-3">Sign In</h2>
     <p>If you don't have an account, you can create one below:</p>
@@ -14,8 +30,10 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="Password" class="form-control" required />
         </div>
-        <button type="submit" class="btn btn-primary">Sign In</button>
-        <a href="/CreateUser" class="btn btn-secondary">Create User</a> <!-- Link styled as a button -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Sign In</button>
+            <a href="/CreateUser" class="btn btn-secondary btn-auto-width">Create User</a>
+        </div>
     </form>
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))

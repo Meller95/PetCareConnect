@@ -87,12 +87,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Feedback">Feedback</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Assignments">Assignments</a>
-                        </li>
+                        @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Feedback">Feedback</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Assignments">Assignments</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (!string.IsNullOrEmpty(Context.Session.GetString("Username")))
@@ -108,7 +111,7 @@
                             </li>
                             <li class="nav-item">
                                 <form method="post" asp-page="/Logout">
-                                    <button type="submit" class="btn btn-secondary">Logout</button>
+                                    <button type="submit" class="btn btn-secondary btn-fixed-width">Logout</button>
                                 </form>
                             </li>
                         }

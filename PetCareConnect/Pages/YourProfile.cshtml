@@ -34,9 +34,38 @@
         font-weight: bold;
         color: #000;
     }
+
+    .profile-page .btn {
+        min-width: 200px; /* Set a minimum width for buttons */
+    }
+
+    .profile-page .btn-fixed-width {
+        width: 120px; /* Set a fixed width for buttons in the profile page */
+    }
+
+    .assignment-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .assignment-buttons .btn {
+            margin-bottom: 10px;
+        }
+
+    .assignments-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+        align-items: center;
+        width: 50%; /* Adjust the width to make it more compact */
+    }
+
+    .assignment-item {
+        display: contents;
+    }
 </style>
 
-<div class="container">
+<div class="container profile-page">
     @if (Model.User != null)
     {
         <h2 class="mb-3">@Model.User.Username's Profile</h2>
@@ -45,43 +74,42 @@
             <p>Email: @Model.User.Email</p>
         </div>
 
-        <!-- Link to Register Pet Page -->
-        <p>
-            <a class="btn btn-primary" asp-page="/RegisterPet">Register Pet</a>
-        </p>
-
-        <!-- Link to Create Assignment Page -->
-        <p>
-            <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
-        </p>
-
-        <!-- Link to Registered Pets Page -->
-        <p>
-            <a class="btn btn-primary" asp-page="/RegisteredPets">Registered Pets</a>
-        </p>
-
-        <!-- Button to view messages -->
-        <p>
-            <a class="btn btn-primary" asp-page="/Messages">Your Messages</a>
-        </p>
+        <!-- Links with consistent button width -->
+        <div class="assignment-buttons">
+            <p>
+                <a class="btn btn-primary" asp-page="/RegisterPet">Register Pet</a>
+            </p>
+            <p>
+                <a class="btn btn-primary" asp-page="/CreateAssignmentModel">Create Assignment</a>
+            </p>
+            <p>
+                <a class="btn btn-primary" asp-page="/RegisteredPets">Registered Pets</a>
+            </p>
+            <p>
+                <a class="btn btn-primary" asp-page="/Messages">Your Messages</a>
+            </p>
+        </div>
 
         <h2>Your Assignments</h2>
-        <ul>
+        <div class="assignments-list">
             @if (Model.Assignments != null)
             {
                 @foreach (var assignment in Model.Assignments)
                 {
-                    <li>
-                        @assignment.StartDate.ToShortDateString() - @Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name
-                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
-                    </li>
+                    <div class="assignment-item">
+                        <div>@Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name</div>
+                        <div>@assignment.StartDate.ToShortDateString()</div>
+                        <div>
+                            <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId" class="btn btn-info">Assignment Details</a>
+                        </div>
+                    </div>
                 }
             }
             else
             {
                 <p>No assignments found.</p>
             }
-        </ul>
+        </div>
 
         <h2>Assignments You've Booked</h2>
         @if (Model.BookedAssignments != null && Model.BookedAssignments.Any())
