@@ -1,17 +1,20 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using PetCareConnect.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PetCareConnect.Pages
 {
     public class YourProfileModel : PageModel
     {
-        public User User { get; set; }
-        public List<Pets> Pets { get; set; }
-        public List<Assignment> Assignments { get; set; }
-        public List<Assignment> BookedAssignments { get; set; } // New
+        public User User { get; set; } = new User(); // Initialized to avoid null reference
+        public List<Pets> Pets { get; set; } = new List<Pets>(); // Initialized to avoid null reference
+        public List<Assignment> Assignments { get; set; } = new List<Assignment>(); // Initialized to avoid null reference
+        public List<Assignment> BookedAssignments { get; set; } = new List<Assignment>(); // Initialized to avoid null reference
 
         public IActionResult OnGet()
         {
@@ -23,7 +26,7 @@ namespace PetCareConnect.Pages
                 {
                     Pets = GetPetsForUser(User.UserId);
                     Assignments = GetAssignmentsForUser(User.UserId);
-                    BookedAssignments = GetBookedAssignmentsForUser(User.UserId); // New
+                    BookedAssignments = GetBookedAssignmentsForUser(User.UserId);
                 }
                 else
                 {
@@ -37,32 +40,65 @@ namespace PetCareConnect.Pages
             return Page();
         }
 
-        public IActionResult OnPostDeletePet(int petId)
+        public IActionResult OnPostUploadProfilePicture(IFormFile profilePicture)
         {
-            if (petId <= 0)
+            var username = HttpContext.Session.GetString("Username");
+            if (string.IsNullOrEmpty(username))
             {
-                return BadRequest("Invalid ID provided.");
+                return RedirectToPage("/SignIn");
             }
 
-            try
+            if (profilePicture != null && profilePicture.Length > 0)
             {
-                using (var connection = DB_Connection.GetConnection())
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "Users", profilePicture.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    var command = new SqlCommand("DELETE FROM Pets WHERE PetId = @PetId", connection);
-                    command.Parameters.AddWithValue("@PetId", petId);
-                    int result = command.ExecuteNonQuery();
-                    if (result == 0)
+                    profilePicture.CopyTo(stream);
+                }
+
+                var profilePictureUrl = $"/images/Users/{profilePicture.FileName}";
+                UpdateUserProfilePicture(username, profilePictureUrl);
+            }
+
+            return RedirectToPage();
+        }
+
+        private void UpdateUserProfilePicture(string username, string profilePictureUrl)
+        {
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("UPDATE Users SET ProfilePictureUrl = @ProfilePictureUrl WHERE Username = @Username", connection);
+                command.Parameters.AddWithValue("@ProfilePictureUrl", profilePictureUrl);
+                command.Parameters.AddWithValue("@Username", username);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private User GetUserDetails(string username)
+        {
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("SELECT UserId, Username, Email, FullName, CreatedAt, LastLogin, ProfilePictureUrl FROM Users WHERE Username = @Username", connection);
+                command.Parameters.AddWithValue("@Username", username);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
                     {
-                        return NotFound("Pet not found.");
+                        return new User
+                        {
+                            UserId = reader.GetInt32(0),
+                            Username = reader.IsDBNull(1) ? null : reader.GetString(1),
+                            Email = reader.IsDBNull(2) ? null : reader.GetString(2),
+                            FullName = reader.IsDBNull(3) ? null : reader.GetString(3),
+                            CreatedAt = reader.GetDateTime(4),
+                            LastLogin = reader.GetDateTime(5),
+                            ProfilePictureUrl = reader.IsDBNull(6) ? null : reader.GetString(6)
+                        };
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                return StatusCode(500, "Database error: " + ex.Message);
-            }
-
-            return RedirectToPage("/YourProfile");
+            return null;
         }
 
         public IActionResult OnPostCancelAssignment(int assignmentId)
@@ -106,86 +142,31 @@ namespace PetCareConnect.Pages
             }
         }
 
-        public IActionResult OnPostConfirmBooking(int assignmentId)
+        private List<Pets> GetPetsForUser(int userId)
         {
-            var loggedInUserId = HttpContext.Session.GetInt32("UserId");
-            if (loggedInUserId == null)
+            var pets = new List<Pets>();
+            using (var connection = DB_Connection.GetConnection())
             {
-                return RedirectToPage("/Login");
-            }
+                var command = new SqlCommand("SELECT PetId, Name, Species, Breed, Age, Info FROM Pets WHERE OwnerId = @OwnerId", connection);
+                command.Parameters.AddWithValue("@OwnerId", userId);
 
-            try
-            {
-                using (var connection = DB_Connection.GetConnection())
+                using (var reader = command.ExecuteReader())
                 {
-                    var command = new SqlCommand("UPDATE Assignments SET BookingConfirmed = 1 WHERE AssignmentId = @AssignmentId AND UserId = @UserId", connection);
-                    command.Parameters.AddWithValue("@UserId", loggedInUserId);
-                    command.Parameters.AddWithValue("@AssignmentId", assignmentId);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    while (reader.Read())
                     {
-                        Console.WriteLine("Booking confirmed successfully.");
-                        return RedirectToPage("/YourProfile");
-                    }
-                    else
-                    {
-                        Console.WriteLine("No rows affected.");
-                        return Page();  // Return to page with error message
+                        pets.Add(new Pets
+                        {
+                            PetId = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Species = reader.GetString(2),
+                            Breed = reader.IsDBNull(3) ? null : reader.GetString(3),
+                            Age = reader.GetInt32(4),
+                            Info = reader.IsDBNull(5) ? null : reader.GetString(5)
+                        });
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("SQL Error: " + ex.Message);
-                return Page();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("General Error: " + ex.Message);
-                return Page();
-            }
-        }
-
-        public IActionResult OnPostCancelBooking(int assignmentId)
-        {
-            var loggedInUserId = HttpContext.Session.GetInt32("UserId");
-            if (loggedInUserId == null)
-            {
-                return RedirectToPage("/Login");
-            }
-
-            try
-            {
-                using (var connection = DB_Connection.GetConnection())
-                {
-                    var command = new SqlCommand("UPDATE Assignments SET BookingConfirmed = 0 WHERE AssignmentId = @AssignmentId AND UserId = @UserId", connection);
-                    command.Parameters.AddWithValue("@UserId", loggedInUserId);
-                    command.Parameters.AddWithValue("@AssignmentId", assignmentId);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-                        Console.WriteLine("Booking canceled successfully.");
-                        return RedirectToPage("/YourProfile");
-                    }
-                    else
-                    {
-                        Console.WriteLine("No rows affected.");
-                        return Page();  // Return to page with error message
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("SQL Error: " + ex.Message);
-                return Page();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("General Error: " + ex.Message);
-                return Page();
-            }
+            return pets;
         }
 
         public List<Assignment> GetAssignmentsForUser(int userId)
@@ -195,7 +176,7 @@ namespace PetCareConnect.Pages
             {
                 var command = new SqlCommand(@"
                     SELECT a.AssignmentId, a.PetId, a.StartDate, a.Title, a.City, a.EndDate, a.BookedByUserId, u.Username AS BookedByUsername, 
-                    ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed
+                    ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed, u.ProfilePictureUrl AS BookedByUserProfilePictureUrl
                     FROM Assignments a
                     LEFT JOIN Users u ON a.BookedByUserId = u.UserId
                     WHERE a.UserId = @UserId", connection);
@@ -215,7 +196,8 @@ namespace PetCareConnect.Pages
                             EndDate = reader.GetDateTime(5),
                             BookedByUserId = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6),
                             BookedByUsername = reader.IsDBNull(7) ? null : reader.GetString(7),
-                            BookingConfirmed = reader.GetBoolean(8)
+                            BookingConfirmed = reader.GetBoolean(8),
+                            BookedByUserProfilePictureUrl = reader.IsDBNull(9) ? null : reader.GetString(9)
                         });
                     }
                 }
@@ -261,63 +243,12 @@ namespace PetCareConnect.Pages
                             PetName = reader.GetString(13),
                             Species = reader.GetString(14),
                             UserName = reader.GetString(15),
-                            BookingConfirmed = reader.GetBoolean(16)  // Get the BookingConfirmed status
+                            BookingConfirmed = reader.GetBoolean(16)
                         });
                     }
                 }
             }
             return assignments;
-        }
-
-        private User GetUserDetails(string username)
-        {
-            using (var connection = DB_Connection.GetConnection())
-            {
-                var command = new SqlCommand("SELECT UserId, Username, Email, FullName, CreatedAt, LastLogin FROM Users WHERE Username = @Username", connection);
-                command.Parameters.AddWithValue("@Username", username);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        return new User
-                        {
-                            UserId = reader.GetInt32(0), // Assume UserID cannot be null as it's likely a primary key
-                            Username = reader.IsDBNull(1) ? null : reader.GetString(1),
-                            Email = reader.IsDBNull(2) ? null : reader.GetString(2),
-                            FullName = reader.IsDBNull(3) ? null : reader.GetString(3),
-                        };
-                    }
-                }
-            }
-            return null; // or handle as needed if no user is found
-        }
-
-        private List<Pets> GetPetsForUser(int userId)
-        {
-            var pets = new List<Pets>();
-            using (var connection = DB_Connection.GetConnection())
-            {
-                var command = new SqlCommand("SELECT PetId, Name, Species, Breed, Age, Info FROM Pets WHERE OwnerId = @OwnerId", connection);
-                command.Parameters.AddWithValue("@OwnerId", userId);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        pets.Add(new Pets
-                        {
-                            PetId = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            Species = reader.GetString(2),
-                            Breed = reader.IsDBNull(3) ? null : reader.GetString(3),
-                            Age = reader.GetInt32(4),
-                            Info = reader.IsDBNull(5) ? null : reader.GetString(5)
-                        });
-                    }
-                }
-            }
-            return pets;
         }
     }
 }

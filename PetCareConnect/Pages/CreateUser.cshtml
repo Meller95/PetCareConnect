@@ -2,7 +2,7 @@
 @model PetCareConnect.Pages.CreateUserModel
 
 <h2 class="mb-3">Create a New User</h2>
-<form method="post" onsubmit="return validatePassword()">
+<form method="post" enctype="multipart/form-data" onsubmit="return validatePassword()">
     <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" asp-for="NewUser.Username" class="form-control" required />
@@ -19,6 +19,10 @@
     <div class="form-group">
         <label for="fullname">Full Name:</label>
         <input type="text" asp-for="NewUser.FullName" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="profilePicture">Profile Picture:</label>
+        <input type="file" class="form-control-file" id="profilePicture" name="profilePicture">
     </div>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>

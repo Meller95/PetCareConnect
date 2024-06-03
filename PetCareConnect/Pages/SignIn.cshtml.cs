@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using BCrypt.Net;
+using System;
 
 namespace PetCareConnect.Pages
 {
@@ -26,6 +27,9 @@ namespace PetCareConnect.Pages
                 // Get the UserId from the username
                 int userId = GetUserIdByUsername(Username);
                 HttpContext.Session.SetInt32("UserId", userId);
+
+                // Update the LastLogin field in the database
+                UpdateLastLogin(userId);
 
                 return RedirectToPage("/YourProfile");
             }
@@ -61,6 +65,17 @@ namespace PetCareConnect.Pages
                 command.Parameters.AddWithValue("@Username", username);
 
                 return (int)command.ExecuteScalar();
+            }
+        }
+
+        private void UpdateLastLogin(int userId)
+        {
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var command = new SqlCommand("UPDATE Users SET LastLogin = @LastLogin WHERE UserId = @UserId", connection);
+                command.Parameters.AddWithValue("@LastLogin", DateTime.Now);
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.ExecuteNonQuery();
             }
         }
     }

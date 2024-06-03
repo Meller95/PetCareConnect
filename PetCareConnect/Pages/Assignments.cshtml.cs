@@ -28,10 +28,12 @@ namespace PetCareConnect.Pages
                     SELECT a.AssignmentId, a.UserId, a.PetId, a.StartDate, a.EndDate, a.TaskType,
                            a.FeedingSchedule, a.FoodAmount, a.Title, a.City, a.Comments, a.Payment,
                            p.PictureUrl, p.Name AS PetName, p.Species, u.Username AS UserName, 
-                           ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed
+                           ISNULL(a.BookingConfirmed, 0) AS BookingConfirmed,
+                           b.Username AS BookedByUsername, b.ProfilePictureUrl AS BookedByUserProfilePictureUrl
                     FROM Assignments a
                     JOIN Pets p ON a.PetId = p.PetId
                     JOIN Users u ON a.UserId = u.UserId
+                    LEFT JOIN Users b ON a.BookedByUserId = b.UserId
                     WHERE (@SearchCity IS NULL OR a.City LIKE '%' + @SearchCity + '%')
                     AND a.BookedByUserId IS NULL"; // Only show assignments that are not booked
 
@@ -61,7 +63,9 @@ namespace PetCareConnect.Pages
                                     PetName = reader.GetString(13),
                                     Species = reader.GetString(14),
                                     UserName = reader.GetString(15),
-                                    BookingConfirmed = reader.GetBoolean(16)
+                                    BookingConfirmed = reader.GetBoolean(16),
+                                    BookedByUsername = reader.IsDBNull(17) ? null : reader.GetString(17),
+                                    BookedByUserProfilePictureUrl = reader.IsDBNull(18) ? null : reader.GetString(18)
                                 };
                                 Assignments.Add(assignment);
                             }

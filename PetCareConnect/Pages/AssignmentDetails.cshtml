@@ -8,22 +8,41 @@
     <h1>Assignment Details</h1>
 
     <!-- Display assignment details here -->
-    <div class="card">
-        <div class="card-body">
-            <h2>@Model.Assignment.StartDate.ToShortDateString() - @Model.Pet.Name</h2>
-            <!-- Add more details as needed -->
+    <div class="card mb-3">
+        <div class="card-img-container">
+            @if (!string.IsNullOrEmpty(Model.Assignment.PictureUrl))
+            {
+                <img src="@Model.Assignment.PictureUrl" class="card-img-top" alt="Pet Image">
+            }
+        </div>
+        <div class="card-content">
+            <h5 class="card-title">@Model.Assignment.Title</h5>
+            <p class="card-text">
+                <strong>Pet Name:</strong> @Model.Pet.Name <br />
+                <strong>User Name:</strong> @Model.Assignment.UserName <br />
+                <strong>Species:</strong> @Model.Pet.Species <br />
+                <strong>City:</strong> @Model.Assignment.City <br />
+                <strong>Start Date:</strong> @Model.Assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                <strong>End Date:</strong> @Model.Assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                <strong>Task Type:</strong> @Model.Assignment.TaskType <br />
+                <strong>Feeding Schedule:</strong> @Model.Assignment.FeedingSchedule <br />
+                <strong>Food Amount:</strong> @Model.Assignment.FoodAmount <br />
+                <strong>Comments:</strong> @Model.Assignment.Comments <br />
+            </p>
+            <p class="card-payment">
+                <strong>Payment:</strong> $@Model.Assignment.Payment
+            </p>
         </div>
     </div>
 
     <!-- Buttons to change or delete assignment -->
     <div class="mt-3">
-    <form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
-        <button type="submit" class="btn btn-primary mb-2">Change Assignment</button>
-    </form>
+        <form method="get" asp-page="/EditAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+            <button type="submit" class="btn btn-primary mb-2">Change Assignment</button>
+        </form>
 
-    <form asp-page-handler="DeleteAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
-        <button type="submit" class="btn btn-danger ml-2 mb-2">Delete Assignment</button>
-    </form>
-</div>
-
+        <form method="post" asp-page-handler="DeleteAssignment" asp-route-assignmentId="@Model.Assignment.AssignmentId">
+            <button type="submit" class="btn btn-danger ml-2 mb-2">Delete Assignment</button>
+        </form>
+    </div>
 </div>

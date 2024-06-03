@@ -17,6 +17,7 @@
     public string Species { get; set; }
     public string UserName { get; set; }
     public bool BookingConfirmed { get; set; }
-    public int? BookedByUserId { get; set; } // New field for the ID of the user who booked the assignment
-    public string BookedByUsername { get; set; } // New field for the username of the user who booked the assignment
+    public int? BookedByUserId { get; set; }
+    public string BookedByUsername { get; set; }
+    public string BookedByUserProfilePictureUrl { get; set; }
 }

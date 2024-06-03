@@ -16,8 +16,8 @@ namespace PetCareConnect.Pages
 
         public IActionResult OnGet()
         {
-            var LoggedInUserId = HttpContext.Session.GetInt32("UserId");
-            if (LoggedInUserId == null)
+            var loggedInUserId = HttpContext.Session.GetInt32("UserId");
+            if (loggedInUserId == null)
             {
                 return RedirectToPage("/SignIn");
             }
@@ -34,12 +34,6 @@ namespace PetCareConnect.Pages
             return Page();
         }
 
-        public IActionResult OnPostChangeAssignment()
-        {
-            // Redirect to the page where you can change the assignment
-            return RedirectToPage("/EditAssignment", new { assignmentId = AssignmentId });
-        }
-
         public IActionResult OnPostDeleteAssignment()
         {
             // Delete the assignment
@@ -51,7 +45,14 @@ namespace PetCareConnect.Pages
         {
             using (var connection = DB_Connection.GetConnection())
             {
-                var command = new SqlCommand("SELECT * FROM Assignments WHERE AssignmentId = @AssignmentId", connection);
+                var command = new SqlCommand(@"
+                    SELECT a.AssignmentId, a.UserId, a.PetId, a.StartDate, a.EndDate, a.TaskType,
+                           a.FeedingSchedule, a.FoodAmount, a.Title, a.City, a.Comments, a.Payment,
+                           p.PictureUrl, p.Name AS PetName, p.Species, u.Username AS UserName
+                    FROM Assignments a
+                    JOIN Pets p ON a.PetId = p.PetId
+                    JOIN Users u ON a.UserId = u.UserId
+                    WHERE a.AssignmentId = @AssignmentId", connection);
                 command.Parameters.AddWithValue("@AssignmentId", assignmentId);
 
                 using (var reader = command.ExecuteReader())
@@ -67,7 +68,15 @@ namespace PetCareConnect.Pages
                             EndDate = reader.GetDateTime(4),
                             TaskType = reader.GetString(5),
                             FeedingSchedule = reader.GetString(6),
-                            FoodAmount = reader.GetString(7)
+                            FoodAmount = reader.GetString(7),
+                            Title = reader.IsDBNull(8) ? null : reader.GetString(8),
+                            City = reader.IsDBNull(9) ? null : reader.GetString(9),
+                            Comments = reader.IsDBNull(10) ? null : reader.GetString(10),
+                            Payment = reader.GetDecimal(11),
+                            PictureUrl = reader.IsDBNull(12) ? null : reader.GetString(12),
+                            PetName = reader.GetString(13),
+                            Species = reader.GetString(14),
+                            UserName = reader.GetString(15)
                         };
                     }
                 }
@@ -112,4 +121,3 @@ namespace PetCareConnect.Pages
         }
     }
 }
-
