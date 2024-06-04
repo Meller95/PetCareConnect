@@ -65,7 +65,7 @@ namespace PetCareConnect.Data
                 command.Parameters.AddWithValue("@SenderId", senderId);
                 command.Parameters.AddWithValue("@ReceiverId", receiverId);
                 command.Parameters.AddWithValue("@Content", content);
-                command.Parameters.AddWithValue("@Timestamp", DateTime.Now); // Assuming you want to store the current timestamp
+                command.Parameters.AddWithValue("@Timestamp", DateTime.Now); // Store the current timestamp
                 command.ExecuteNonQuery();
             }
         }
@@ -88,40 +88,5 @@ namespace PetCareConnect.Data
             }
             return userId;
         }
-
-
-
-        private string GetUsernameById(int userId)
-        {
-            string username = null;
-
-            using (var connection = DB_Connection.GetConnection())
-            {
-                try
-                {
-                    // Prepare SQL command to fetch username by user ID
-                    string query = "SELECT Username FROM Users WHERE UserId = @UserId";
-                    using (var command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@UserId", userId);
-
-                        // Execute the command and retrieve the username
-                        var result = command.ExecuteScalar();
-                        if (result != null)
-                        {
-                            username = result.ToString();
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle any exceptions
-                    Console.WriteLine("Error retrieving username: " + ex.Message);
-                }
-            }
-
-            return username;
-        }
-
     }
 }
