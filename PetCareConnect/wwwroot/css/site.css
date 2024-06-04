@@ -55,6 +55,7 @@ body {
         border: 2px solid #90EE90 !important; /* Lighter green outline for user's own assignments */
     }
 
+
 .card-img-container {
     display: flex;
     flex: 1;
@@ -125,3 +126,8 @@ body {
 .colorblind-default {
     filter: none;
 }
+
+.custom-toggler.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke='rgb(173,216,230)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 6h22M4 18h22M7 12l10 10L7 22l10-10z'/></svg>");
+}
+

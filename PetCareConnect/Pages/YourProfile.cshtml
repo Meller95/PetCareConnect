@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Your Profile";
 }
-
 <style>
     .profile-container {
         display: flex;
@@ -21,27 +20,27 @@
 
     .profile-picture-container {
         position: relative;
-        width: 260px; /* Further increased the width */
-        height: 260px; /* Further increased the height */
+        width: 280px;
+        height: 290px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-        .profile-picture-container img {
-            width: 220px; /* Original width */
-            height: 220px; /* Original height */
-            object-fit: cover;
-            border-radius: 50%;
-        }
+    .profile-picture-container img {
+        width: 220px;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 
     .upload-icon {
         font-size: 2rem;
         cursor: pointer;
         color: #007bff;
         position: absolute;
-        bottom: 20px; /* Increased the bottom margin */
-        right: 20px; /* Increased the right margin */
+        bottom: 20px;
+        right: 20px;
     }
 
     .profile-actions {
@@ -51,16 +50,16 @@
         justify-content: flex-end;
     }
 
-        .profile-actions a {
-            margin-bottom: 10px;
-            color: #007bff;
-            text-decoration: underline;
-            cursor: pointer;
-        }
+    .profile-actions a {
+        margin-bottom: 20px;
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
     .assignments-list {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* Updated to include 5 columns */
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         gap: 10px;
         align-items: center;
         width: 100%;
@@ -79,11 +78,11 @@
         flex: 1;
     }
 
-        .card-img-container img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-        }
+    .card-img-container img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
 
     .card-content {
         flex: 1;
@@ -136,50 +135,52 @@
         {
             @foreach (var assignment in Model.Assignments)
             {
-                <div class="assignment-item">
-                    <div>@Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name</div>
-                    <div>@assignment.StartDate.ToShortDateString()</div>
-                    <div>
-                        <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId">assignment details</a>
-                    </div>
-                    <div>
+                        <div class="assignment-item">
+                            <div>@Model.Pets.FirstOrDefault(p => p.PetId == assignment.PetId)?.Name</div>
+                            <div>@assignment.StartDate.ToShortDateString()</div>
+                            <div>
+                                <a asp-page="/AssignmentDetails" asp-route-AssignmentId="@assignment.AssignmentId">assignment details</a>
+                            </div>
+                            <div>
                         @if (assignment.BookedByUserId != null)
                         {
                             @if (!assignment.BookingConfirmed)
                             {
-                                <form method="post" asp-page-handler="ConfirmBooking">
-                                    <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
-                                    <button type="submit" class="btn btn-success">Confirm Booking</button>
-                                </form>
+                                                <form method="post" asp-page-handler="ConfirmBooking">
+                                                    <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                                    <button type="submit" class="btn btn-success">Confirm Booking</button>
+                                                </form>
                             }
                             else
                             {
-                                <form method="post" asp-page-handler="CancelBooking">
-                                    <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
-                                    <button type="submit" class="btn btn-danger">Cancel Booking</button>
-                                </form>
+                                                <form method="post" asp-page-handler="CancelBooking">
+                                                    <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                                    <button type="submit" class="btn btn-danger">Cancel Booking</button>
+                                                </form>
                             }
                         }
                         else
                         {
-                            <span class="badge badge-warning">Not Booked</span>
+                                        <span class="badge badge-warning">Not Booked</span>
                         }
-                    </div>
-                    <div>
+                            </div>
+                            <div>
                         @if (assignment.BookedByUserId != null)
                         {
-                            <div class="d-flex align-items-center">
-                                <img src="@assignment.BookedByUserProfilePictureUrl" alt="Booked By" class="rounded-circle" style="width: 30px; height: 30px; margin-right: 10px;">
-                                <span>@assignment.BookedByUsername</span>
-                            </div>
+                                        <div class="d-flex align-items-center">
+                                            <a asp-page="/UserProfile" asp-route-userId="@assignment.BookedByUserId" asp-route-assignmentId="@assignment.AssignmentId">
+                                                <img src="@assignment.BookedByUserProfilePictureUrl" alt="Booked By" class="rounded-circle" style="width: 30px; height: 30px; margin-right: 10px;">
+                                    @assignment.BookedByUsername
+                                            </a>
+                                        </div>
                         }
-                    </div>
-                </div>
+                            </div>
+                        </div>
             }
         }
         else
         {
-            <p>No assignments found.</p>
+                <p>No assignments found.</p>
         }
     </div>
 
@@ -188,65 +189,65 @@
     {
         @foreach (var assignment in Model.BookedAssignments)
         {
-            <div class="card">
-                <div class="card-img-container">
+                    <div class="card">
+                        <div class="card-img-container">
                     @if (!string.IsNullOrEmpty(assignment.PictureUrl))
                     {
-                        <img src="@assignment.PictureUrl" class="card-img-top" alt="Pet Image">
+                                    <img src="@assignment.PictureUrl" class="card-img-top" alt="Pet Image">
                     }
-                </div>
-                <div class="card-content">
-                    <h5 class="card-title">@assignment.Title</h5>
-                    <p class="card-text">
-                        <strong>Pet Name:</strong> @assignment.PetName <br />
-                        <strong>User Name:</strong> @assignment.UserName <br />
-                        <strong>Species:</strong> @assignment.Species <br />
-                        <strong>City:</strong> @assignment.City <br />
-                        <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
-                        <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
-                        <strong>Task Type:</strong> @assignment.TaskType <br />
-                        <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
-                        <strong>Food Amount:</strong> @assignment.FoodAmount <br />
-                        <strong>Comments:</strong> @assignment.Comments <br />
-                    </p>
-                    <p class="card-payment">
-                        <strong>Payment:</strong> $@assignment.Payment
-                    </p>
+                        </div>
+                        <div class="card-content">
+                            <h5 class="card-title">@assignment.Title</h5>
+                            <p class="card-text">
+                                <strong>Pet Name:</strong> @assignment.PetName <br />
+                                <strong>User Name:</strong> @assignment.UserName <br />
+                                <strong>Species:</strong> @assignment.Species <br />
+                                <strong>City:</strong> @assignment.City <br />
+                                <strong>Start Date:</strong> @assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                                <strong>End Date:</strong> @assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                                <strong>Task Type:</strong> @assignment.TaskType <br />
+                                <strong>Feeding Schedule:</strong> @assignment.FeedingSchedule <br />
+                                <strong>Food Amount:</strong> @assignment.FoodAmount <br />
+                                <strong>Comments:</strong> @assignment.Comments <br />
+                            </p>
+                            <p class="card-payment">
+                                <strong>Payment:</strong> $@assignment.Payment
+                            </p>
                     @if (!assignment.BookingConfirmed)
                     {
-                        <span class="badge badge-warning">Not Confirmed</span>
+                                    <span class="badge badge-warning">Not Confirmed</span>
                     }
                     else
                     {
-                        <span class="badge badge-success">Confirmed</span>
+                                    <span class="badge badge-success">Confirmed</span>
                     }
-                    <form method="post" asp-page-handler="CancelAssignment">
-                        <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
-                        <button type="submit" class="btn btn-danger">Cancel Assignment</button>
-                    </form>
-                </div>
-            </div>
+                            <form method="post" asp-page-handler="CancelAssignment">
+                                <input type="hidden" name="assignmentId" value="@assignment.AssignmentId" />
+                                <button type="submit" class="btn btn-danger">Cancel Assignment</button>
+                            </form>
+                        </div>
+                    </div>
         }
     }
     else
     {
-        <p>No booked assignments found.</p>
+            <p>No booked assignments found.</p>
     }
 </div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-    <script>
-        function previewAndSubmit() {
-            var fileInput = document.getElementById('profilePicture');
-            if (fileInput.files && fileInput.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('profilePictureImg').src = e.target.result;
-                    document.getElementById('profilePictureForm').submit();
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+        <script>
+            function previewAndSubmit() {
+                var fileInput = document.getElementById('profilePicture');
+                if (fileInput.files && fileInput.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('profilePictureImg').src = e.target.result;
+                        document.getElementById('profilePictureForm').submit();
+                    }
+                    reader.readAsDataURL(fileInput.files[0]);
                 }
-                reader.readAsDataURL(fileInput.files[0]);
             }
-        }
-    </script>
+        </script>
 }

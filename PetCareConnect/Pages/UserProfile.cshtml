@@ -1,0 +1,130 @@
+﻿@page "{userId:int}/{assignmentId:int}"
+@model PetCareConnect.Pages.UserProfileModel
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<style>
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .profile-container {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 20px;
+        border: 1px solid #ccc; /* Outline */
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .profile-picture-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-right: 20px;
+    }
+
+    .profile-picture-container img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .profile-details {
+        flex: 3;
+        text-align: left;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .card-img-container {
+        flex: 1;
+        max-width: 50%;
+    }
+
+    .card-img-container img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .card-content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
+    .card-payment {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="profile-container">
+        <div class="profile-picture-container">
+            <img src="@Model.User.ProfilePictureUrl" alt="Profile Picture" class="rounded-circle">
+        </div>
+        <div class="profile-details">
+            <h2 class="mb-3">@Model.User.Username's Profile</h2>
+            <p><strong>Full Name:</strong> @Model.User.FullName</p>
+            <p><strong>Email:</strong> @Model.User.Email</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-img-container">
+                    @if (!string.IsNullOrEmpty(Model.Assignment.PictureUrl))
+                    {
+                            <img src="@Url.Content("~/" + Model.Assignment.PictureUrl)" class="card-img-top" alt="Pet Image" style="width: 100%; height: auto; object-fit: cover;">
+                    }
+                </div>
+                <div class="card-content">
+                    <h5 class="card-title">@Model.Assignment.Title</h5>
+                    <p class="card-text">
+                        <strong>Pet Name:</strong> @Model.Assignment.PetName <br />
+                        <strong>User Name:</strong> @Model.Assignment.UserName <br />
+                        <strong>Species:</strong> @Model.Assignment.Species <br />
+                        <strong>City:</strong> @Model.Assignment.City <br />
+                        <strong>Start Date:</strong> @Model.Assignment.StartDate.ToString("yyyy-MM-dd") <br />
+                        <strong>End Date:</strong> @Model.Assignment.EndDate.ToString("yyyy-MM-dd") <br />
+                        <strong>Task Type:</strong> @Model.Assignment.TaskType <br />
+                        <strong>Feeding Schedule:</strong> @Model.Assignment.FeedingSchedule <br />
+                        <strong>Food Amount:</strong> @Model.Assignment.FoodAmount <br />
+                        <strong>Comments:</strong> @Model.Assignment.Comments <br />
+                    </p>
+                    <p class="card-payment">
+                        <strong>Payment:</strong> $@Model.Assignment.Payment
+                    </p>
+                    @if (!Model.Assignment.BookingConfirmed)
+                    {
+                            <span class="badge badge-warning">Not Confirmed</span>
+                    }
+                    else
+                    {
+                            <span class="badge badge-success">Confirmed</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
