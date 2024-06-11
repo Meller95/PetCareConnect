@@ -30,7 +30,7 @@
         <div class="messages-inner">
             @foreach (var message in Model.Messages)
             {
-                <div class="message">
+                <div class="message @(message.SenderUsername == HttpContext.Session.GetString("Username") ? "sent" : "received")">
                     <p><strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong> @message.Content</p>
                     <p class="timestamp">@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</p>
                 </div>
@@ -48,23 +48,28 @@
         padding: 20px;
     }
 
-        .messages-container .messages-inner {
-            height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
+    .messages-container .messages-inner {
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
 
-        .messages-container .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-            color: black;
-        }
+    .messages-container .message {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+        color: black;
+    }
 
-        .messages-container .timestamp {
-            font-size: 0.8em;
-            color: #777;
-        }
+    .messages-container .message.sent {
+        background-color: turquoise; /* Background color for sent messages */
+        color: white; /* Text color for sent messages */
+    }
+
+    .messages-container .timestamp {
+        font-size: 0.8em;
+        color: #777;
+    }
 </style>
