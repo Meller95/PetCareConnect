@@ -1,4 +1,6 @@
 ﻿@page
+@using PetCareConnect.Models
+
 @model PetCareConnect.Pages.MessagesModel
 @{
     ViewData["Title"] = "Messages";
@@ -30,14 +32,24 @@
         <div class="messages-inner">
             @foreach (var message in Model.Messages)
             {
-                <div class="message @(message.SenderUsername == HttpContext.Session.GetString("Username") ? "sent" : "received")">
-                    <p><strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong> @message.Content</p>
+                <div class="message @(IsMessageSentByLoggedInUser(message) ? "sent" : "received")">
+                    <p><strong>@(IsMessageSentByLoggedInUser(message) ? "You" : message.SenderUsername):</strong> @message.Content</p>
                     <p class="timestamp">@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</p>
                 </div>
             }
         </div>
     </div>
 </div>
+
+@functions 
+{
+    bool IsMessageSentByLoggedInUser(PetCareConnect.Models.Message message)
+    {
+        var loggedInUserId = HttpContext.Session.GetInt32("UserId");
+        return loggedInUserId.HasValue && message.SenderId == loggedInUserId.Value;
+    }
+}
+
 
 <a asp-page="/NewMessage" class="btn btn-primary">New Message</a>
 
