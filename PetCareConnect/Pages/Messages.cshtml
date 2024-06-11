@@ -1,24 +1,70 @@
 ﻿@page
 @model PetCareConnect.Pages.MessagesModel
+@{
+    ViewData["Title"] = "Messages";
+}
 
-<h2>Messages</h2>
-<ul>
-    @foreach (var message in Model.Messages)
-    {
-        <li>
-            <div>
-                <strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong>
-            </div>
-            <div>
-                <span>To: @(message.ReceiverUsername == HttpContext.Session.GetString("Username") ? "You" : message.ReceiverUsername)</span> <!-- Display "To: Receiver username" -->
-            </div>
-            <div>@message.Content</div>
-            <div>
-                <small>@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</small>
-            </div>
-        </li>
-    }
-</ul>
+<div class="container">
+    <h2>Messages</h2>
+    <form method="get">
+        <div class="form-group">
+            <label for="userSelect">Select User:</label>
+            <select id="userSelect" name="SelectedUserId" class="form-control" onchange="this.form.submit()">
+                <option value="">-- Select a user --</option>
+                @foreach (var user in Model.MessagedUsers)
+                {
+                    if (Model.SelectedUserId == user.UserId)
+                    {
+                        <option value="@user.UserId" selected>@user.Username</option>
+                    }
+                    else
+                    {
+                        <option value="@user.UserId">@user.Username</option>
+                    }
+                }
+            </select>
+        </div>
+    </form>
 
-<!-- Button to compose a new message -->
+    <div class="messages-container">
+        <div class="messages-inner">
+            @foreach (var message in Model.Messages)
+            {
+                <div class="message">
+                    <p><strong>@(message.SenderUsername == HttpContext.Session.GetString("Username") ? "You" : message.SenderUsername):</strong> @message.Content</p>
+                    <p class="timestamp">@message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 <a asp-page="/NewMessage" class="btn btn-primary">New Message</a>
+
+<style>
+    .messages-container {
+        max-width: 600px; /* Limit width within the messages section */
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+        .messages-container .messages-inner {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .messages-container .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            color: black;
+        }
+
+        .messages-container .timestamp {
+            font-size: 0.8em;
+            color: #777;
+        }
+</style>

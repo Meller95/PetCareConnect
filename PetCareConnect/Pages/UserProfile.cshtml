@@ -86,6 +86,7 @@
             <h2 class="mb-3">@Model.User.Username's Profile</h2>
             <p><strong>Full Name:</strong> @Model.User.FullName</p>
             <p><strong>Email:</strong> @Model.User.Email</p>
+            <a asp-page="/NewMessage" asp-route-receiverUsername="@Model.User.Username" class="btn btn-primary">Send Message</a>
         </div>
     </div>
 
@@ -95,7 +96,7 @@
                 <div class="card-img-container">
                     @if (!string.IsNullOrEmpty(Model.Assignment.PictureUrl))
                     {
-                            <img src="@Url.Content("~/" + Model.Assignment.PictureUrl)" class="card-img-top" alt="Pet Image" style="width: 100%; height: auto; object-fit: cover;">
+                        <img src="@Url.Content("~/" + Model.Assignment.PictureUrl)" class="card-img-top" alt="Pet Image" style="width: 100%; height: auto; object-fit: cover;">
                     }
                 </div>
                 <div class="card-content">
@@ -117,14 +118,15 @@
                     </p>
                     @if (!Model.Assignment.BookingConfirmed)
                     {
-                            <span class="badge badge-warning">Not Confirmed</span>
+                        <span class="badge badge-warning">Not Confirmed</span>
                     }
                     else
                     {
-                            <span class="badge badge-success">Confirmed</span>
+                        <span class="badge badge-success">Confirmed</span>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+

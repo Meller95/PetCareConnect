@@ -88,5 +88,78 @@ namespace PetCareConnect.Data
             }
             return userId;
         }
+        public List<User> GetMessagedUsers(int currentUserId)
+        {
+            var users = new List<User>();
+
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var query = @"
+            SELECT DISTINCT u.UserId, u.Username
+            FROM Users u
+            JOIN Messages m ON u.UserId = m.SenderId OR u.UserId = m.ReceiverId
+            WHERE (m.SenderId = @CurrentUserId OR m.ReceiverId = @CurrentUserId) AND u.UserId != @CurrentUserId";
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@CurrentUserId", currentUserId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            users.Add(new User
+                            {
+                                UserId = reader.GetInt32(0),
+                                Username = reader.GetString(1)
+                            });
+                        }
+                    }
+                }
+            }
+
+            return users;
+        }
+        public List<Message> GetMessagesBetweenUsers(int currentUserId, int otherUserId)
+        {
+            var messages = new List<Message>();
+
+            using (var connection = DB_Connection.GetConnection())
+            {
+                var query = @"
+            SELECT m.MessageId, m.SenderId, m.ReceiverId, m.Content, m.Timestamp,
+                   s.Username AS SenderUsername, r.Username AS ReceiverUsername
+            FROM Messages m
+            JOIN Users s ON m.SenderId = s.UserId
+            JOIN Users r ON m.ReceiverId = r.UserId
+            WHERE (m.SenderId = @CurrentUserId AND m.ReceiverId = @OtherUserId) OR
+                  (m.SenderId = @OtherUserId AND m.ReceiverId = @CurrentUserId)
+            ORDER BY m.Timestamp ASC";
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@CurrentUserId", currentUserId);
+                    command.Parameters.AddWithValue("@OtherUserId", otherUserId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            messages.Add(new Message
+                            {
+                                MessageId = reader.GetInt32(0),
+                                SenderId = reader.GetInt32(1),
+                                ReceiverId = reader.GetInt32(2),
+                                Content = reader.GetString(3),
+                                Timestamp = reader.GetDateTime(4),
+                                SenderUsername = reader.GetString(5),
+                                ReceiverUsername = reader.GetString(6)
+                            });
+                        }
+                    }
+                }
+            }
+            return messages;
+        }
     }
 }
