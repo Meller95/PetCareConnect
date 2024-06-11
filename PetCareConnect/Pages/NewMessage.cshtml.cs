@@ -18,6 +18,11 @@ namespace PetCareConnect.Pages
             _messageRepository = new MessageRepository();
         }
 
+        public void OnGet(string receiverUsername)
+        {
+            ReceiverUsername = receiverUsername;
+        }
+
         public IActionResult OnPost()
         {
             var senderUsername = HttpContext.Session.GetString("Username");
